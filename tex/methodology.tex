@@ -1,0 +1,37 @@
+\chapter{Methodology}
+
+In this chapter it is going to be explained all the steps required to achieve a functional neural network to participate at the ActivityNet Challenge.
+
+\section{ActivityNet Dataset}
+
+How the dataset was downloaded.
+
+Some stats about the dataset such as figures about the activity apperance.
+
+\section{Extracting Video Features Using C3D}
+
+First that the C3D weights were ported from Caffe to Theano
+
+Then how the videos were read (OpenCV) and passed to the ported C3D model. Extracted the features of the fc6 layer.
+
+\section{Extracting Audio Features}
+
+The audio features extracted: MFCC and Spectral
+
+\section{Prepare the Data for Stateful Recurrent Networks}
+
+How the data was prepared to be trained to the Recurrent Network
+
+\section{Networks Configuration}
+
+Talk about the different configurations I have tried:
+* Normal LSTM with different variations in number of layers and neurons
+* Feedback Model
+* Semisupervised
+
+\section{Post-Processing Proposed}
+
+How to compute the classification for each video.
+
+How to get the temporal localization of the activities to the videos.
+Mean filter, activity probability computation.
