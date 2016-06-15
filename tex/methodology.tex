@@ -23,17 +23,28 @@ Once all the videos from the dataset were downloaded, the number of frames of ea
 
 The C3D network\cite{tran2014learning} was decided to use as a video features extractor to be known to extract very well either spatial and temporal correlations from videos.
 %%TODO add references
+
 The original paper proposing and studying 3D convolutions applied to videos, also give code to reproduce it. The code given was based on a version of \textit{Caffe}\cite{jia2014caffe} dated to 2014. Because the code to use 3D convolutions did not support last functionalities and did not work with the \textit{Python} environment used for this project, the model trained with C3D and the Sports1M dataset was ported to \textit{Keras}\footnote{All the process has been open sourced and can be found in: \url{https://gist.github.com/albertomontesg/d8b21a179c1e6cca0480ebdf292c34d2}}. Keras is a deep learning framework that works over \textit{Theano}\cite{theano2016theano} and \textit{TensorFlow}\cite{abadi2016tensorflow}, two computational frameworks which allow run and train deep learning models over either CPU and GPU.
 
+At the time to run the C3D model on the model ported to \textit{Keras}, some little changes where required to do over the source code\footnote{The fork of \textit{Keras} used can be found in: \url{https://github.com/albertomontesg/keras/tree/develop}} due to the implementation of the 3D convolution and 3D pooling operations. Once this was fixed, all the videos where passed throught the C3D model, and its features at \textit{fc6} extracted. This process could be done in parallel with 2 GPUs computing the features and multiple CPU cores fetching from disk all the videos. This task was expected to last a lot of time (one week approximately) but thanks to parallelize the process, only in two days all the features where computed from the 65.6 million frames available at the dataset.
 
-
-Then how the videos were read (OpenCV) and passed to the ported C3D model. Extracted the features of the fc6 layer.
+In the process of fetching the videos from disk, was used \textit{OpenCV}\cite{opencv_library} a framework with interesting utils fot Computer Vision applications. With this software, the videos were read in chunks of 16 frames, resized to 112x112 as input frame size and then feed the C3D network. The output of the model, a sequence of 4096-sized vectors where stored in disk for preparing it to train the Recurrent Neural Network.
 
 \section{Extracting Audio Features}
 
 The audio features extracted: MFCC and Spectral
 
+%%TODO: Ask for bibliografy
+
 \section{Prepare the Data for Stateful Recurrent Networks}
+
+Since all the videos on the ActivityNet Dataset are not from the same length, to train a recurrent neural network, it requires to give it a fixed lenght sequence. This length is called \textit{timestep} and must be a value not very high because as the gradient propagates along all the sequence, if the timestep is very high, the gradient might achieve very high values known as \textit{exploting gradient}.
+
+There are two main solutions to this, in order to keep the memory state of the LSTM cells for a long sequences. The first solution would require to clip it as is explained in \cite{pascanu2012difficulty}. The second solution is to train the Recurrent Neural Network without reseting the memory between each batch. With this approach, if a video sequence longer than the \textit{timestep} does not fit into the batch, the RNN can be trained passing framents of the videos one after the other at the same batch position, and because the memory is not reset after each batch, at the training of the next batch, the memory will be preserve. For this configuration the different videos must be carefully set on the same batch index to exploit the \texit{Keras} functionality of stateful training for RNNs.
+
+
+
+
 
 How the data was prepared to be trained to the Recurrent Network
 
