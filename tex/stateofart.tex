@@ -2,6 +2,17 @@
 
 Over the last years deep learning techniques have evolve and have achieve incredible results for impressive tasks.
 
+
+For the activity detection and recognition, many approaches have been proposed. Most of them can be classify by the deep learning techniques used. Most of them used an approach of two stages (encoder and decoder) to learn from video's dataset. The first stage, the one being consider a decoder, is the stage that tries to encode the visual and temporal information from the input videos into some features vectors or information. The second stage, also known as decoder, tries from the extracted encoded information from tha first stage, make a prediction of the output, which can be a classification of the video or a temporal localization of an activity.
+
+Is very common see that as encoder, use Convolutional Neural Networks (or also known as CNNs) as it has been widely demonstrated that appliying CNN networks to images and videos has obtain very good results in classifications tasks. A very well known and used CNN network is the VGG\cite{Simonyan14c} network which was top scored on ImageNet Challenge in 2014 on classification task. This network uses 2D convolutional kernels to extract spatial correlations from images and therefor learn how to classify them. Applying this techniques to activity detection, there are some implementations\cite{simonyan2014two}\cite{yeung2015every}\cite{Ng_2015_CVPR}\cite{ballas2015delving} using mostly the VGG network to encode video information.
+
+On the other hand very recently was proposed a CNN which tries to explode both spatial and temporal correlations in video data exploding the additional dimension that videos offer and images do not. This is the 3D convolutional network, also referenced as C3D\cite{tran2014learning}. This network uses 3D kernels rather than 2D to extract videos information and try to learn from them. It has been widely used\cite{baccouche2011sequential}\cite{tran2015deep}\cite{tran2014learning}\cite{shoutemporal} for applications such as video classification. On some other research papers\cite{Yao_2015_ICCV}\cite{zhang2016modelling} the both approaches have been tried using 2D and 3D convolutional networks.
+
+For this network, the input data is very common to use the raw video and let the network learn and extract information. Feeding the network with all the pixels of each frame in bunches of frames (the C3D is fed up with a 16 frame video clip) is very common, but in other cases some tricks are done. To feed up 2D convolutional layers but trying to learn from temporal correlations, what is done is compute the optical vector between frames and give it to a 2D CNN for training in combination with a parallel CNN fed up with the raw frames\cite{Ng_2015_CVPR}\cite{Yao_2015_ICCV}.
+
+
+
 \section{Convolutional Neural Networks}
 
 Talk about convolutional neural networks and how can be used to extract spatial features from images.
