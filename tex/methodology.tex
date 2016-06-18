@@ -11,7 +11,7 @@ All the video from this dataset are placed on \textit{YouTube} so only the links
 
 Once all the videos from the dataset were downloaded, the number of frames of each video was extracted because the temporal unit at the time to process it will be the frames. In addition to this, some stats were computed. Such as the whole number of frames from all the videos in the dataset which is 65.6 million frames. Also, the lenght in minutes of each activity at the dataset was plot on Figure~\ref{fig:dataset_stats} to have an idea about the activities frequencies. As can be seen, not all the activities have the same appearance along the dataset, varying from 40 minutes the least frequent activity to 3.5 hours the more frequent one. In total over all the dataset there are 313 hours of activities which will be required to detect and localize.
 
-\begin{figure}
+\begin{figure}[H]
 \begin{center}
 \includegraphics[width=1\linewidth]{img/methodology/dataset_stats}
 \end{center}
@@ -21,10 +21,18 @@ Once all the videos from the dataset were downloaded, the number of frames of ea
 
 \section{Extracting Video Features Using C3D}
 
-The C3D network\cite{tran2014learning} was decided to use as a video features extractor to be known to extract very well either spatial and temporal correlations from videos.
+The C3D network\cite{tran2014learning} was decided to use as a video features extractor to be known to extract very well\cite{baccouche2011sequential}\cite{tran2015deep}\cite{tran2014learning}\cite{shoutemporal} either spatial and temporal correlations from videos. This network is made up of 8 convolutional layers, plus 5 pooling layers and 2 fully-connected layers at the end. The convolutional layers have $3 \times 3 \times 3$\footnote{For notation, the dimension ordering is $d \times k \times k$ where $d$ is temporal dimension and $k$ is spatial dimension} kernels and stride 1 while at the same time the pooling layers compute the maximum at every kernel size of $2 \times 2 \times 2$ except from the first pool layer which has a $1 \times 2 \times 2$ kernel size. On the Figure~\ref{fig:c3d_architecture} there is the representation of the C3D architecture with the number of kernels or neurons of each convolutional layer and fully-conneted layer.
 %%TODO add references
 
-The original paper proposing and studying 3D convolutions applied to videos, also give code to reproduce it. The code given was based on a version of \textit{Caffe}\cite{jia2014caffe} dated to 2014. Because the code to use 3D convolutions did not support last functionalities and did not work with the \textit{Python} environment used for this project, the model trained with C3D and the Sports1M dataset was ported to \textit{Keras}\footnote{All the process has been open sourced and can be found in: \url{https://gist.github.com/albertomontesg/d8b21a179c1e6cca0480ebdf292c34d2}}. Keras is a deep learning framework that works over \textit{Theano}\cite{theano2016theano} and \textit{TensorFlow}\cite{abadi2016tensorflow}, two computational frameworks which allow run and train deep learning models over either CPU and GPU.
+\begin{figure}[H]
+\begin{center}
+\includegraphics[width=1\linewidth]{img/methodology/c3d_architecture}
+\end{center}
+\caption{Architecture of the C3D network}
+\label{fig:c3d_architecture}
+\end{figure}
+
+The original paper proposing and studying 3D convolutions applied to videos, also give code to reproduce it. The code given was based on a version of \textit{Caffe}\cite{jia2014caffe} dated to 2014. Because the code to use 3D convolutions did not support last functionalities and did not work with the \textit{Python} environment used for this project, the model trained with C3D and the Sports1M dataset was ported to \textit{Keras}\footnote{All the process has been open sourced and can be found in: \url{https://gist.github.com/albertomontesg/d8b21a179c1e6cca0480ebdf292c34d2}}. Keras is a deep learning framework that works over \textit{Theano}\cite{theano2016theano} and \textit{TensorFlow}\cite{abadi2016tensorflow}, two computational frameworks which allow run and train deep learning models over either CPU and GPU. For this work, \textit{Theano} was used as backend to do the computations because their support for 3D convolutions operations.
 
 At the time to run the C3D model on the model ported to \textit{Keras}, some little changes where required to do over the source code\footnote{The fork of \textit{Keras} used can be found in: \url{https://github.com/albertomontesg/keras/tree/develop}} due to the implementation of the 3D convolution and 3D pooling operations. Once this was fixed, all the videos where passed throught the C3D model, and its features at \textit{fc6} extracted. This process could be done in parallel with 2 GPUs computing the features and multiple CPU cores fetching from disk all the videos. This task was expected to last a lot of time (one week approximately) but thanks to parallelize the process, only in two days all the features where computed from the 65.6 million frames available at the dataset.
 
