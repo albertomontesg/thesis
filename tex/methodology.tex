@@ -58,6 +58,14 @@ Since all the videos on the ActivityNet Dataset are not from the same length, to
 
 There are two main solutions to this, in order to keep the memory state of the LSTM cells for a long sequences. The first solution would require to clip it as is explained in \cite{pascanu2012difficulty}. The second solution is to train the Recurrent Neural Network without resetting the memory between each batch. With this approach, if a video sequence longer than the \textit{timestep} does not fit into the batch, the RNN can be trained passing fragments of the videos as clips one after the other at the same batch position, and because the memory is not reset after each batch, at the training of the next batch, the memory will be preserve. For this configuration the different videos must be carefully set on the same batch index to exploit the \textit{Keras} functionality of stateful training for RNNs.
 
+\begin{figure}[H]
+\begin{center}
+\includegraphics[width=1\linewidth]{img/methodology/stateful_dataset}
+\end{center}
+\caption{Graphical representation of how the data is sorted in order to train RNNs}
+\label{fig:stateful_dataset}
+\end{figure}
+
 In the Figure~\ref{fig:stateful_dataset} is graphically represented how the video features are organized to train the Recurrent Neural Network. The notation for the data is as follows, where $\bar{X}$ is the feature vector of a 16 frame clip extracted from the C3D network, and $V_i$ the sequence of features for a single video. Note that $T_i$ is the length of the sequence of each video $i$ in number of 16-frame clips.
 
 \begin{equation}
@@ -67,31 +75,109 @@ In the Figure~\ref{fig:stateful_dataset} is graphically represented how the vide
 	V_i = \{ \bar{X}_t \}_{t=1}^{T_i}
 \end{equation}
 
-\begin{figure}[H]
-\begin{center}
-\includegraphics[width=1\linewidth]{img/methodology/stateful_dataset}
-\end{center}
-\caption{Graphical representation of how the data is sorted in order to train RNNs}
-\label{fig:stateful_dataset}
-\end{figure}
-
 In order to try to fit the most possible data into the GPUs when training each batch and to get a good gradient propagation along the batch's sequence length, for all the experiments done on this project, the batch size was 256 and the timesteps 20.
 
-As the last step to prepare the data, the output information was computed for each 16-frame clip as follows: if the Intersection Over Union between the temporal range of the 16-frame clip and the ground truth annotations was higher than $0.5$, the clip was catalogize as the activity of the ground truth annotation. If the IOU was lower, it was catalogize as background activity. So at the training and validation subsets, the output was encoded with the one-hot encoding, which puts a 1 at the position of the class given and 0s on the rest. This way to encode the output is the used for softmax layers as output which represent the probability of each class to be predicted as the output is between 0 and 1.
+As the last step to prepare the data, the output information was computed for each 16-frame clip as follows: if the Intersection Over Union (IOU) between the temporal range of the 16-frame clip and the ground truth annotations was higher than $0.5$, the clip was cataloged as the activity of the ground truth annotation. If the IOU was lower, it was cataloged as background activity. So at the training and validation subsets, the output was encoded with the one-hot encoding, which puts a 1 at the position of the class given and 0s on the rest. This way to encode the output is the used for Softmax output layers which represent the probability of each class to be predicted as the output is between 0 and 1.
 
 \section{Networks Configuration}
 
+So as to achieve the aim of this project, which is to find a good Neural Network which is capable of classify activities and detect its temporal location in videos, the Recurrent Neural Networks were decided to be used with LSTM which have been demonstrated to learn from long term correlations. The RNN had the inputs and output previously explained, and so an experimentation of the architecture was done. 
 
-Talk about the different configurations I have tried:
-\begin{itemize}
-    \item Normal LSTM with different variations in number of layers and neurons
-    \item Feedback Model
-    \item Semisupervised
-\end{itemize}
+The basic architecture consist in a single layer of LSTM with 512 cells which end-up with a total of 9.5 millions parameters. From this network as a basic one, on this project there has been some experimentation trying with more deep networks with even more cells. On Figure~\ref{fig:lstm_architecture} there is represented the network architecture.
 
-Talk a little bit about the training and show a pair of curves and justify where extract the results and plot two figures side-by-side 
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{.5\textwidth}
+  \centering
+  \includegraphics[width=1\linewidth]{img/methodology/lstm_architecture_basic}
+\end{subfigure}%
+\begin{subfigure}[b]{.5\textwidth}
+  \centering
+  \includegraphics[width=1\linewidth]{img/methodology/lstm_architecture_deep}
+\end{subfigure}
+\caption{Architecture of RNN used with 512-LSTMs with one and two layers respectively.}
+\label{fig:lstm_architecture}
+\end{figure}
+
+With the basic architecture was observed that the activity prediction, in some cases was very different in short periods of time, predicting between two activities or one activity and the background class. To solve this problem, another architecture proposed consist in the previous basic one, but with an additional input at the bottom which consist the previous output of the sequence. This kind of feedback, was expected to give more smooth predictions as the network is aware about which was exactly the previous activity predicted.
+
+For this network, a new input was added to the video features which was the one-hot encoding of the previous output with an added value, which will be always zero except to the first video feature, which do not have previous output, and will be marked with a one. With this extra value, is expected that the network learn to forget its memory state because the begging of a video sequence. In the Figure~\ref{fig:lstm_architecture_feedback} can be found the architecture previously explained with feedback.
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[width=0.6\linewidth]{img/methodology/lstm_architecture_feedback}
+\end{center}
+\caption{Architecture of the RNN network with feedback from the previous output}
+\label{fig:lstm_architecture_feedback}
+\end{figure}
+
+
+
+%%%%% Talk about semisupervised training???????
+
+
+
+\section{Training}
+
+At the time to train, some parameters required to be specified, and some problems appear with them. For training a loss function was chosen, also known as objective function. For the configuration proposed, the best loss function to choose is the categorical cross entropy because the use of Softmax as output which predicts each activity probability and can be considered as a probability distribution. It is computed as follows,
+
+\begin{equation}
+	H(p,q) = - \sum_x p(x) \log(q(x))
+\end{equation}
+
+where $q$ is the predicted probability distribution and $p$ the ground truth probability distribution.
+
+Another important parameter to setup for training is the optimizer function. For training Recurrent Neural Networks, the best choice is to use the RMSprop\cite{dauphin2015rmsprop} with a value of $\rho$ of 0.9 and $\epsilon$ of $10^{-8}$. The learning rate, otherwise, have been the value that has need to be tuned. At the training, starting with high values for the learning rate, it was observed that the network did not learned and the validation loss increased instead of decreasing. On the Figure~\ref{fig:training_curves_comparison} can be seen the difference between training the same network with a different values of learning rate. Finally the best learning rate that was found to work better at the time to train is $10^{-5}$.
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{.5\textwidth}
+  \centering
+  \includegraphics[width=1\linewidth]{img/methodology/training_bad}
+\end{subfigure}%
+\begin{subfigure}[b]{.5\textwidth}
+  \centering
+  \includegraphics[width=1\linewidth]{img/methodology/training_good}
+\end{subfigure}
+\caption{Comparison of the learning curves. On the left with a learning of $10^{-4}$ and at the right figure with a learning rate of $10^{-5}$}
+\label{fig:training_curves_comparison}
+\end{figure}
+
+In addition to find the right value for the learning rate, some other problems appear. Even with a good learning rate to learn, it was observed that the network presented some over-fitting due mostly to the high learning capacity the network has over the data. So, in order to fix that, dropout\cite{srivastava2014dropout} layers were added before and after the LSTM layers to reduce this over-fitting. Dropout consists in randomly setting a fraction $p$ of input units to 0 at each update during training time. The value of $p$ chosen was 0.5.
+
+Another inconvenience found during training, was related to the fact of having as an input multiple vectors from multiple sources. When training with the visual features extracted from the C3D network, with the audio features or/and the previous output, as all of them presented a different statistics, a normalization was required. So for all the experiments, a batch normalization\cite{ioffe2015batch} was placed after the input data in order to have all the inputs with the same statistics, mean 0 and standard deviation equal to 1. 
+
+The last problem that was necessary to face, was related with the fact of unbalanced output. All the activities had the approximately the same frequency of appearance, but nearly half of the video clips correspond to a non-activity, or as it has been defined, background class. So with this huge unbalance of the output classes, it was decided to weight the loss function in order to slow down the learning when the background class was predicted. With this method the predicted output will not be so bias towards the background class.
+
+The new loss function taking into account the unbalanced classes is
+
+\begin{equation}
+	H(p,q) = \sum_x \alpha(x) p(x) \log (q(x)), \text{ where } \alpha(x) = 
+    \begin{cases}
+        \rho, & x = \text{background instance}\\
+        1,    & \text{otherwise}
+    \end{cases}
+\end{equation}
+
+where $\rho$ is the factor used to weight the loss for background instances at training. This value $\rho$ is usually computed as 1 minus the frequency of appearance of the class (for all the activities class can be simplified to 1). For the background class was found the its frequency of appearance was 0.4 so it was tested to setup $\rho = 0.6$. The results did present a little improvement so it was decided to even do smaller this value, setting it finally $\rho = 0.3$.
 
 \section{Post-Processing Proposed}
+
+The network proposed gives as an output the predicted activity probability for each 16-frames clip. For the challenge to face during this project, and for the aim of this project is required to compute from the output obtained the activity classification for the whole video and the temporal localization of this activity. To obtain this information, some post-processing was required as it is not directly predicted from the network.
+
+\subsection{Classification Task}
+
+For the classification task, what was done as the first stage was remove the output probability corresponding to the background class and normalize the rest of the activities probabilities (the sum of all the probabilities for each clip become to be 1). Once the background class was removed (as it is known that in all of the videos in the ActivityNet Dataset, there is one activity on it), then the mean of each video activity class was computed along the video's output sequence.
+
+\begin{equation}
+	p_{video}(x) = \frac{1}{T_{video}} \sum_i^{video} p_i(x), \text{where } x \in \{ \text{Dataset Activities}\}
+\end{equation}
+
+With this operation, there is for each video in the dataset a vector of probabilities, each one giving the probability of each activity happening along the video. All the values given by this vector where the ones used to make the prediction, taking the activity highest probable as the video activity and the probability of prediction computed as the score.
+
+\subsection{Detection Task}
+ 
+For the detection task of the ActivityNet Challenge, or temporal activity localization, more operations were required.
 
 How to compute the classification for each video.
 
