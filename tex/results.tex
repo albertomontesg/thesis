@@ -1,20 +1,154 @@
 \chapter{Results}
 \label{section:results}
 
+On this section, the results of the multiple experimentation will be given and detailed.
+
 \section{Evaluation Metric}
 
-The mAP metric for classification task.
+In task like classification and detection, the research community and also the ActivityNet Challenge use the same metrics for evaluation to be able to compare results between publications. For the classification tasks, for each instance more than one prediction can be made, and for each prediction giving a the probability of success computed. With this multiple predictions for each instance some metric are computed. The simplest one is the \textit{Hit@k}, which gives you the proportion of the instance where the ground truth is on the \textit{top-k} predictions given. For the ActivityNet Challenge $k$ was set to 3.
 
-The IOU and mAP for the detection task.
+In addition to this metric, for classifications tasks, it is mostly use the mean Average Precision (mAP) metric. It is computed as the mean of the average precision of all $M$ classes at the Dataset.
+
+\begin{equation}
+	mAP = \frac{1}{M} \sum_{m=1}^{M} AP(m)
+\end{equation}
+
+At the same time, the Average Precision for each class is computed as the average of the precision at position $n$, showed as $P(n)$. This precision is defined as the amount of elements in $k_m$ between positions 1 and $n$ in the ranked list divided by $n$.
+
+\begin{equation}
+	AP(m) = \frac{1}{k_m} \sum_{n=1}^{k_m} P(n)
+\end{equation}
+
+For the other task of the Challenge, the temporal localization or detection as the Challenge name it, the metric use to verify the results given is the Intersection Over Union (IoU). This metric compute a prediction as correct if the IoU of the prediction with the ground truth annotations is higher than a value $\alpha$. Then the mAP is computed. For the ActivityNet Challenge the $\alpha$ value used is 0.5.
+
+For all the metrics computations of this section, it has been used the evaluation scripts given by the ActivityNet Challenge 2016 organization.
 
 \section{Classification Task}
 
+The first experiments made were related to the Recurrent Neural Network architecture, in order to obtain the best performance. The way to measure the performance, was computing the mAP for the classification task. The different architectures first tested were related to the deep of the network. On the first experiment, it was tested from a 3 layers LSTM with 1024 cells each layer, to a one single layer with 512 cells, going through a two layers network with 512 LSTM cells each one. All the architectures presented a batch normalization after the input entrance and dropout before and after the LSTM layers. Also all the experiments were done exclusively with the features extracted from the C3D network.
+
+As is showed on Table~\ref{table:classification_by_architecture}, the network that achieved the best performance was achieved with the simplest 
+
 Explain the results for different configurations.
+
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|c|c|}
+\hline
+Architecture & mAP & Hit@3 \\
+\hline\hline
+3 x 1024-LSTM & 0.5635 & 0.7437 \\
+2 x 512-LSTM & 0.5492 & 0.7364 \\
+1 x 512-LSTM & \bf0.5938 & \bf0.7576 \\
+\hline
+\end{tabular}
+\end{center}
+\caption{Results for classification task comparing different deep architectures. All values with
+         only video features on the validation dataset.}
+\label{table:classification_by_architecture}
+\end{table}
+
+
+
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|c|c|}
+\hline
+Features used & mAP & Hit@3 \\
+\hline\hline
+Only video & \bf0.5938 & \bf0.7576 \\
+Video w/ audio & 0.5755 & 0.7352 \\
+Only video \& feedback & 0.5210 & 0.6982 \\
+Video w/ audio \& feedback & 0.5652 & 0.7319 \\
+\hline
+\end{tabular}
+\end{center}
+\caption{Results for classification task with the model made by one 512-LSTM. Compare between
+         features and feedback on the validation dataset.}
+\label{table:classification_by_features}
+\end{table}
+
+
+
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|c|c|}
+\hline
+\textbf{Global Activities} & \textbf{mAP} \\
+\hline\hline
+Eating and drinking Activities & 0.56942 \\
+Sports, Exercise, and Recreation & 0.93662 \\
+Household Activities & 0.74177 \\
+Socializing, Relaxing, and Leisure & 0.76494 \\
+Personal Care & 0.59931 \\
+\hline\hline
+\textbf{Global} (mAP) & 0.72241 \\
+\textbf{Global} (Hit@3) & 0.92703 \\
+\hline
+\end{tabular}
+\end{center}
+\caption{Mean Average Precision computed for the top level activities of the ActivityNet Dataset. The results are computed over the validation dataset.}
+\end{table}
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[width=1\linewidth]{img/results/top_activities_map_2}
+\end{center}
+\caption{Representation of the results over the top-level activities}
+\label{fig:top_level_classification_map}
+\end{figure}
+
+
+
+\begin{figure}[H]
+\begin{center}
+%\includegraphics[width=1\linewidth]{img/results/high_low_map_classification}
+\end{center}
+\caption{Sample of activities with the highest and lowest mAP for the classification task}
+\label{fig:map_by_activity_classification}
+\end{figure}
+
+\begin{figure}[H]
+\begin{center}
+%\includegraphics[width=1\linewidth]{img/results/confussion_matrix}
+\end{center}
+\caption{}
+\label{fig:confussion_matrix}
+\end{figure}
 
 \section{Detection Task}
 
-The same here with some variations on the post-processing
+The same here with some variations on the post-processing+
+
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|c|c|c|}
+\hline
+$\gamma$ & $k=0$ & $k=5$ & $k=10$ \\
+\hline
+0.2 & 0.20732 & \bf0.22513 & 0.22136 \\
+0.3 & 0.19854 & 0.22077 & 0.22100 \\
+0.5 & 0.19035 & 0.21937 & 0.21302 \\
+\hline
+\end{tabular}
+\end{center}
+\caption{mAP with an IOU threshold of $0.5$ over validation dataset. Here there is a comparison
+between values of $k$ and $\gamma$ on post processing.}
+\label{table:detection_comparison}
+\end{table}
+
+
+\begin{figure}[H]
+\begin{center}
+%\includegraphics[width=1\linewidth]{img/results/confussion_matrix}
+\end{center}
+\caption{Activities with higher and lower mAP for the detection task}
+\label{fig:map_by_activity_detection}
+\end{figure}
+
+Plot with multiple IOU and mAP...
 
 \section{Results Visualization}
 
 Here attach some figures about the predictions made by our model
+
