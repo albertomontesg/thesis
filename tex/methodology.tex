@@ -5,7 +5,6 @@ In this chapter it is going to be explained all the steps required to achieve a 
 \section{Objective}
 
 For this project, the aim has been to obtain a Neural Network capable of classify and temporally localize activities and videos. In order to get that, the proposal is, once the features has been extracted with the C3D, predict with a RNN a sequence of activities that might be happening for every 16-frame clip. So as the output of the Neural Network, is expected to have a sequence each item giving the activity happening at each video clip as input. This approach offers more advantages that others being able to classify the whole video and even localize along the video sequence them multiple activities happening and their temporal localization.
-
 \section{ActivityNet Dataset}
 
 The ActivityNet Dataset\cite{caba2015activitynet} is \textit{A Large-Scale Video Benchmark for
@@ -49,6 +48,8 @@ In the process of fetching the videos from disk, was used \textit{OpenCV}\cite{o
 \section{Extracting Audio Features}
 
 The audio features extracted: MFCC and Spectral
+
+I require to ask Ignasi for references. How much importance I have to make to the audio features. At the results adding audio features does not improve the results with only the video features.
 
 %%TODO: Ask for bibliography
 
@@ -162,6 +163,7 @@ The new loss function taking into account the unbalanced classes is
 where $\rho$ is the factor used to weight the loss for background instances at training. This value $\rho$ is usually computed as 1 minus the frequency of appearance of the class (for all the activities class can be simplified to 1). For the background class was found the its frequency of appearance was 0.4 so it was tested to setup $\rho = 0.6$. The results did present a little improvement so it was decided to even do smaller this value, setting it finally $\rho = 0.3$.
 
 \section{Post-Processing Proposed}
+\label{section:post_processing}
 
 The network proposed gives as an output the predicted activity probability for each 16-frames clip. For the challenge to face during this project, and for the aim of this project is required to compute from the output obtained the activity classification for the whole video and the temporal localization of this activity. To obtain this information, some post-processing was required as it is not directly predicted from the network.
 

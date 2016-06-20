@@ -66,9 +66,13 @@ Video w/ audio \& feedback & 0.5652 & 0.7319 \\
 \label{table:classification_by_features}
 \end{table}
 
+%%%%%%
+How I justify that with audio features the results are worst?
+%%%%%%
+
 The ActivityNet Dataset offers a 200 activities videos, but all this activities come from a taxonomy with hierarchically activities. The 200 activities which are annotated all the videos of the dataset and the proposed network predict are the leaf nodes of the taxonomy tree. On this structure there is 5 top level categories which all the videos belongs and describe more generally the activity happening on the video. These are: \textit{Eating and drinking activities}, \textit{Sports, Exercise and Recreation}, \textit{Household Activities}, \textit{Socializing, Relaxing and Leisure}, \textit{Personal Care}.
 
-For all these top level activities, the mean average precision has been computed. To do so, all the predicted and ground truth activity labels have been changed by its top level activity and then for each of them computed the Average Precision. As can be seen on Table~\ref{table:top_level_ap} the \textit{Sports, Exercise and Recreation} have an average precision of $94\%$. This can be explained with the fact that all the features extracted from the videos come from a network which weights were trained to work with a dataset of videos, the Sports1M\cite{KarpathyCVPR14}.
+For all these top level activities, the mean average precision has been computed. To do so, all the predicted and ground truth activity labels have been changed by its top level activity and then for each of them computed the Average Precision. As can be seen on Table~\ref{table:top_level_classification_ap} and Figure~\ref{table:top_level_classification_ap} the \textit{Sports, Exercise and Recreation} have an average precision of $94\%$. This can be explained with the fact that all the features extracted from the videos come from a network which weights were trained to work with a dataset of videos, the Sports1M\cite{KarpathyCVPR14}.
 
 \begin{table}[H]
 \begin{center}
@@ -88,15 +92,15 @@ Personal Care & 0.59931 \\
 \end{tabular}
 \end{center}
 \caption{Mean Average Precision computed for the top level activities of the ActivityNet Dataset. The results are computed over the validation dataset.}
-\label{table:top_level_ap}
+\label{table:top_level_classification_ap}
 \end{table}
 
 \begin{figure}[H]
 \begin{center}
-\includegraphics[width=1\linewidth]{img/results/top_activities_map_2}
+\includegraphics[width=1\linewidth]{img/results/top_activities_classification_ap}
 \end{center}
 \caption{Representation of the results over the top-level activities}
-\label{fig:top_level_classification_map}
+\label{fig:top_level_classification_ap}
 \end{figure}
 
 
@@ -117,12 +121,19 @@ Personal Care & 0.59931 \\
 \label{fig:confussion_matrix}
 \end{figure}
 
+%%%%%%%%%%%
+You think the confusion matrix is good idea to putting on the memory
+%%%%%%%%%%%
+
 At the time of submitting the predictions made with the best model for the testing dataset the mAP obtained was of $0.58741$ and the Hi@3 of $0.75548$.
 
 \section{Detection Task}
 
-The same here with some variations on the post-processing+
+As the main goal of this project is to obtain a good network to temporally localize activities on videos, it has been compared the results on the detection task of the ActivityNet Challenge for the two architectures proposed. For the basic architecture the network was feed up with video features from the C3D network, while on the feedback architecture, the audio features were concatenated at the input as in classification task improve the results (check Table~\ref{table:classification_by_features}).
 
+%%%%%%%%
+How I justify the feedback architecture does not give best results than the basic one?
+%%%%%%%%
 
 \begin{table}[H]
 \begin{center}
@@ -131,7 +142,7 @@ The same here with some variations on the post-processing+
 Architecture & mAP \\
 \hline\hline
 Basic Architecture & \bf0.22513 \\
-Feedback Architecture &  0.22377\\
+Feedback Architecture &  0.20676 \\
 \hline
 \end{tabular}
 \end{center}
@@ -139,6 +150,9 @@ Feedback Architecture &  0.22377\\
 \label{table:detection_architecture_comparison}
 \end{table}
 
+As shows the Table~\ref{table:detection_architecture_comparison} the basic architecture get a slightly better results. The computation of the mean average precision was done doing the same post-processing to the predicted output of the network proposed on this project.
+
+As it was explained on Section~\ref{section:post_processing}, a post-processing was done to the output to achieve a smoother and better temporal prediction of the activities. During this project there were performed some experiments to maximize the prediction precision for different values of $\gamma$ as the activity probability threshold and $k$ as smoothing factor for the mean filter. For different combinations of these variables it was performed the Table~\ref{table:detection_postprocessing_comparison}.
 
 \begin{table}[H]
 \begin{center}
@@ -154,9 +168,66 @@ $\gamma$ & $k=0$ & $k=5$ & $k=10$ \\
 \end{center}
 \caption{mAP with an IOU threshold of $0.5$ over validation dataset. Here there is a comparison
 between values of $k$ and $\gamma$ on post processing.}
-\label{table:detection_comparison}
+\label{table:detection_postprocessing_comparison}
 \end{table}
 
+As can be seen, the best performance was achieved with an activity threshold $\gamma=0.2$ and smoothing filter of $k=5$. The effect of the both of the operations performed after the prediction can be seen on Figures~\ref{fig:smoothing_effect} and~\ref{fig:activty_threshold_effect}. On both figures it is displayed temporally the location of the activity at the ground truth of the video and also the prediction done with the proposed network before and after of each of the post-processing.
+
+\begin{figure}[H]
+\begin{center}
+%\includegraphics[width=1\linewidth]{img/results/smoothing_effect_1}
+%\includegraphics[width=1\linewidth]{img/results/smoothing_effect_2}
+%\includegraphics[width=1\linewidth]{img/results/smoothing_effect_3}
+\includegraphics[width=1\linewidth]{img/results/smoothing_effect_4}
+\includegraphics[width=1\linewidth]{img/results/smoothing_effect_5}
+\includegraphics[width=1\linewidth]{img/results/smoothing_effect_6}
+\end{center}
+\caption{Effect of the mean filter with $k=5$ achieving a smoother activity prediction.}
+\label{fig:smoothing_effect}
+\end{figure}
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[width=1\linewidth]{img/results/activity_threshold_effect_1}
+\includegraphics[width=1\linewidth]{img/results/activity_threshold_effect_2}
+\includegraphics[width=1\linewidth]{img/results/activity_threshold_effect_3}
+\end{center}
+\caption{}
+\label{fig:activty_threshold_effect}
+\end{figure}
+
+As it has been done for the classification task, the Average Precision has been computed for the top level activities of the ActivityNet Dataset taxonomy. As can be seen on Table~\ref{table:top_level_detection_ap} and Figure~\ref{fig:top_level_detection_ap} all the top level activities present a similar precision in activity temporal localization except from the category \textit{Personal Care} which does not achieve the half of precision of the rest of top level categories. Also remark that the top level category with highest precision is \textit{Sports, Exercise and Recreation} as happens on the classification task.
+%%%%%%
+Here will be a figure comparing the prediction with and without smoothing
+%%%%%%
+
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|r|c|}
+\hline
+\textbf{Global Activities} & \textbf{AP} \\
+\hline\hline
+Eating and drinking Activities & 0.25582 \\
+Sports, Exercise, and Recreation & 0.30023 \\
+Household Activities & 0.26252 \\
+Socializing, Relaxing, and Leisure & 0.26060 \\
+Personal Care & 0.11234 \\
+\hline\hline
+\textbf{Global} (mAP) & 0.23830 \\
+\hline
+\end{tabular}
+\end{center}
+\caption{Average Precision of activity localization computed for the top level activities of the ActivityNet Dataset. The results are computed over the validation dataset and with a IoU threshold of 0.5.}
+\label{table:top_level_detection_ap}
+\end{table}
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[width=1\linewidth]{img/results/top_activities_detection_ap}
+\end{center}
+\caption{Representation of the results over the top-level activities}
+\label{fig:top_level_detection_ap}
+\end{figure}
 
 \begin{figure}[H]
 \begin{center}
@@ -166,9 +237,18 @@ between values of $k$ and $\gamma$ on post processing.}
 \label{fig:map_by_activity_detection}
 \end{figure}
 
+%%%%%%%%
+I don't know if the previous figure actually putting it
+On the other hand I will put a figure ploting the mAP against the IoU asked between 0.1 and 0.5
+%%%%%%%%
+
 Plot with multiple IOU and mAP...
 
 \section{Results Visualization}
 
-Here attach some figures about the predictions made by our model
+Here attach some figures about the predictions made by our model.
+Spend a whole page with examples of temporal predictions.
+
+Doubt: put the figures as the ground truth and classes predicted in a scale of colours,
+or plot only the part of the ground truth that has an activity and also the prediction where the activity is placed as at is computed in the postprocessing to compare?
 
