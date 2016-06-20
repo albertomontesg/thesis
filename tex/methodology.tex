@@ -18,6 +18,13 @@ The aim of this project is to design and train a deep neural network to classify
 The ActivityNet Dataset\cite{caba2015activitynet} is \textit{A Large-Scale Video Benchmark for
 Human Activity Understanding}. This dataset (on its version 1.3, the one used for the challenge), contains 19,994 videos with different 200 activities labeled, representing a wide range of human activities. 
 
+\begin{figure}[H]
+\begin{center}
+%\includegraphics[width=1\linewidth]{img/methodology/dataset_image}
+\end{center}
+\caption{Frames samples of the ActivityNet Dataset}
+\label{fig:dataset_stats}
+\end{figure}
 % AMAIA: I think this section is asking for a figure with some examples of the dataset :). Maybe they have a figure like this in the website or their paper already?
 
 In total there are 660 hours of video and the subsets are split in the following way: 50\% training set, 25\% validation set and 25\% testing set. Each video of the dataset is annotated with a single activity along with the annotation of all temporal locations in which the activity occurs.
@@ -28,11 +35,12 @@ Because all the video from this dataset are hosted on \textit{YouTube}, only the
 
 % AMAIA: I changed some of the text above to be less informal in general... but you should try to do it from this point on.
 
-Once the videos from the dataset were downloaded, the number of frames of each video was extracted because the temporal unit at the time to process it will be the frames. It was decided to use all the frames that each video has to fed the feature extraction and because of this, the temporal resolution in order to predict the activities happening along the video may vary between 0.5 and 1 second of resolution.
+Once the videos from the dataset were downloaded, the number of frames of each video was extracted to be able in the future to convert from seconds to frames in the temporal domain. 
 
 % AMAIA: I don't understand what you mean in the above text. I guess you want to say that all frames from all videos are used ( no subsampling)? The resolution part I don't get. In any case, this does not belong in this section. You should explain this when you talk about feature extraction.
+% ALBERTO: ok done
 
-In addition to this, some stats were computed. Such as the whole number of frames from all the videos in the dataset which is 65.6 million frames. Also, the length in minutes of each activity at the dataset was plot on Figure~\ref{fig:dataset_stats} to have an idea about the activities frequencies. As it can be observed, not all the activities have the same appearance along the dataset, varying from 40 minutes for the least frequent activity to 3.5 hours for the more frequent one. In total, over all the dataset there are 313 hours of activities which need to be detected and localized.
+In addition to this, some stats were computed. Such as the whole number of frames from all the videos in the dataset which is 65.6 million frames. Also, the length in minutes of each activity at the dataset was plot on Figure~\ref{fig:dataset_stats} to have an idea about the activities duration. As it can be observed, not all the activities have the same duration along the dataset, varying from 40 minutes as the total activity appearance to 3.5 hours for the longest activity. In total, over all the dataset there are 313 hours of activities which need to be detected and localized.
 
 \begin{figure}[H]
 \begin{center}
@@ -46,6 +54,8 @@ In addition to this, some stats were computed. Such as the whole number of frame
 
 The C3D network\cite{tran2014learning} was chosen as a feature extractor, due to its success in other works in the literature \cite{baccouche2011sequential,tran2015deep,tran2014learning,shoutemporal}. This network is composed of 8 convolutional layers, plus 5 pooling layers and 2 fully-connected layers at the end. The convolutional layers have $3 \times 3 \times 3$\footnote{For notation, the dimension ordering is $d \times k \times k$ where $d$ is temporal dimension and $k$ is spatial dimension} kernels and stride 1 while at the same time the pooling layers compute the maximum at every kernel size of $2 \times 2 \times 2$ (except from the first pooling layer which has a $1 \times 2 \times 2$ kernel size). Figure~\ref{fig:c3d_architecture} shows a representation of the C3D architecture, including the number of kernels or neurons of each convolutional layer and fully-connected layer.
 %%TODO add references
+
+Talk about sampling in the features extraction
 
 \begin{figure}[H]
 \begin{center}
@@ -74,40 +84,6 @@ The audio features extracted: MFCC and Spectral
 I require to ask Ignasi for references. How much importance I have to make to the audio features. At the results adding audio features does not improve the results with only the video features.
 
 %%TODO: Ask for bibliography
-
-\section{Prepare the Data for Stateful Recurrent Networks} % AMAIA: I think "Data Preparation" is enough for a title. You can talk about stateful training in the text
-
-% AMAIA: You should add a section explaining your architecture before you start talking about how to train it ! So basically section 3.6 should come before this one.
-
-% AMAIA: A friendly intro explaining that  deep nets are usually trained on batches, which contain many samples of the dataset (of the same size)and are processed in parallel. The problem you have is that videos are too long and therefore do not fit in a single batch (risk of exploding gradients as well), so you need to cut them in pieces to separate them in different batches, and also make sure that LSTM memory is preserved from batch to batch.
-
-Since all the videos on the ActivityNet Dataset are not from the same length, to train a recurrent neural network, it requires to give it a fixed length sequence. This length is called \textit{timestep} and must be a value not very high because as the gradient propagates along all the sequence, if the timestep is very high, the gradient might achieve very high values known as \textit{exploiting gradient}.
-
-There are two main solutions to this, in order to keep the memory state of the LSTM cells for a long sequences. The first solution would require to clip the gradients as it is explained in \cite{pascanu2012difficulty}. The second solution is to train the Recurrent Neural Network without resetting the memory from batch to batch. With this approach, if a video sequence is longer than the \textit{timestep}, the RNN can be trained passing fragments of the videos as clips one after the other in different batches, but at the same batch position. Since the memory is not reset after each batch, the video sequence is processed smoothly. For this configuration, the different videos must be carefully set on the same batch index to exploit the \textit{Keras} functionality of stateful training for RNNs.
-
-\begin{figure}[H]
-\begin{center}
-\includegraphics[width=1\linewidth]{img/methodology/stateful_dataset}
-\end{center}
-\caption{Graphical representation of how the data is sorted in batches}
-\label{fig:stateful_dataset}
-\end{figure}
-
-Figure~\ref{fig:stateful_dataset} depicts how the video features are organized to train the Recurrent Neural Network. The notation for the data is as follows: $\bar{X}$ is the feature vector of a 16 frame clip extracted from the C3D network, and $V_i$ the sequence of features for a single video. Note that $T_i$ is the length of the sequence of each video $i$ in number of 16-frame clips.
-
-\begin{equation}
-	\bar{X} = [x_i, x_2, \ldots, x_{4096}]
-\end{equation}
-\begin{equation}
-	V_i = \{ \bar{X}_t \}_{t=1}^{T_i}
-\end{equation}
-
-In order to try to fit the most possible data into the GPUs when training each batch and to get a good gradient propagation along the batch's sequence length, for all the experiments done on this project, the batch size was 256 and the timesteps 20. % AMAIA: The values of this parameters should be given in the experiments section-
-
-As the last step to prepare the data, the output information was computed for each 16-frame clip as follows: if the Intersection Over Union (IOU) between the temporal range of the 16-frame clip and the ground truth annotations was higher than $0.5$, the clip was cataloged as the activity of the ground truth annotation. If the IOU was lower, it was cataloged as background activity. So at the training and validation subsets, the output was encoded with the one-hot encoding, which puts a 1 at the position of the class given and 0s on the rest. This way to encode the output is the used for Softmax output layers which represent the probability of each class to be predicted as the output is between 0 and 1.
-
-% AMAIA: The above paragraph is explaining the evaluation of the output. This does not go here, but later in the experiments section
-% AMAIA: Again, the explanation of how to encode class labels as one-hot vectors should come later.
 
 \section{Networks Configuration}
 
@@ -145,6 +121,40 @@ For this network, a new input was added to the video features which was the one-
 
 %%%%% Talk about semisupervised training???????
 
+
+\section{Data Preparation}
+
+% AMAIA: You should add a section explaining your architecture before you start talking about how to train it ! So basically section 3.6 should come before this one.
+
+% AMAIA: A friendly intro explaining that  deep nets are usually trained on batches, which contain many samples of the dataset (of the same size)and are processed in parallel. The problem you have is that videos are too long and therefore do not fit in a single batch (risk of exploding gradients as well), so you need to cut them in pieces to separate them in different batches, and also make sure that LSTM memory is preserved from batch to batch.
+
+Since all the videos on the ActivityNet Dataset are not from the same length, to train a recurrent neural network, it requires to give it a fixed length sequence. This length is called \textit{timestep} and must be a value not very high because as the gradient propagates along all the sequence, if the timestep is very high, the gradient might achieve very high values known as \textit{exploiting gradient}.
+
+There are two main solutions to this, in order to keep the memory state of the LSTM cells for a long sequences. The first solution would require to clip the gradients as it is explained in \cite{pascanu2012difficulty}. The second solution is to train the Recurrent Neural Network without resetting the memory from batch to batch. With this approach, if a video sequence is longer than the \textit{timestep}, the RNN can be trained passing fragments of the videos as clips one after the other in different batches, but at the same batch position. Since the memory is not reset after each batch, the video sequence is processed smoothly. For this configuration, the different videos must be carefully set on the same batch index to exploit the \textit{Keras} functionality of stateful training for RNNs.
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[width=1\linewidth]{img/methodology/stateful_dataset}
+\end{center}
+\caption{Graphical representation of how the data is sorted in batches}
+\label{fig:stateful_dataset}
+\end{figure}
+
+Figure~\ref{fig:stateful_dataset} depicts how the video features are organized to train the Recurrent Neural Network. The notation for the data is as follows: $\bar{X}$ is the feature vector of a 16 frame clip extracted from the C3D network, and $V_i$ the sequence of features for a single video. Note that $T_i$ is the length of the sequence of each video $i$ in number of 16-frame clips.
+
+\begin{equation}
+	\bar{X} = [x_i, x_2, \ldots, x_{4096}]
+\end{equation}
+\begin{equation}
+	V_i = \{ \bar{X}_t \}_{t=1}^{T_i}
+\end{equation}
+
+In order to try to fit the most possible data into the GPUs when training each batch and to get a good gradient propagation along the batch's sequence length, for all the experiments done on this project, the batch size was 256 and the timesteps 20. % AMAIA: The values of this parameters should be given in the experiments section-
+
+As the last step to prepare the data, the output information was computed for each 16-frame clip as follows: if the Intersection Over Union (IOU) between the temporal range of the 16-frame clip and the ground truth annotations was higher than $0.5$, the clip was cataloged as the activity of the ground truth annotation. If the IOU was lower, it was cataloged as background activity. So at the training and validation subsets, the output was encoded with the one-hot encoding, which puts a 1 at the position of the class given and 0s on the rest. This way to encode the output is the used for Softmax output layers which represent the probability of each class to be predicted as the output is between 0 and 1.
+
+% AMAIA: The above paragraph is explaining the evaluation of the output. This does not go here, but later in the experiments section
+% AMAIA: Again, the explanation of how to encode class labels as one-hot vectors should come later.
 
 
 \section{Training}
