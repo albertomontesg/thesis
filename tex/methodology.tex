@@ -104,7 +104,7 @@ Since in all major video datasets, videos are not from the same length, the vide
 
 There are two main solutions to this problem. The first solution is to have the data in batches with large \textit{timestep} but it would require to clip the gradients as it is explained in \cite{pascanu2012difficulty}. The second solution is to train the Recurrent Neural Network without resetting the memory from batch to batch. With this approach, if a video sequence is longer than the \textit{timestep}, the RNN can be trained passing fragments of the videos as clips one after the other in different batches, but at the same batch position. Since the memory is not reset after each batch, the video sequence is processed smoothly. For this configuration, the different videos must be carefully set on the same batch index to exploit the \textit{Keras} functionality of stateful training for RNNs.
 
-\begin{figure}[H]
+\begin{figure}[h]
 \begin{center}
 \includegraphics[width=1\linewidth]{img/methodology/stateful_dataset}
 \end{center}
@@ -121,15 +121,17 @@ Figure~\ref{fig:stateful_dataset} depicts how the video features are organized t
 	V_i = \{ \bar{X}_t \}_{t=1}^{T_i}
 \end{equation}
 
-In order to try to fit the most possible data into the GPUs when training each batch and to get a good gradient propagation along the batch's sequence length, for all the experiments done on this project, the batch size was 256 and the timesteps 20. % AMAIA: The values of this parameters should be given in the experiments section-
+%In order to try to fit the most possible data into the GPUs when training each batch and to get a good gradient propagation along the batch's sequence length, for all the experiments done on this project, the batch size was 256 and the timesteps 20. % AMAIA: The values of this parameters should be given in the experiments section- % ALBERTO: Completely agree
 
 As the last step to prepare the data, the output information was computed for each 16-frame clip as follows: if the Intersection Over Union (IOU) between the temporal range of the 16-frame clip and the ground truth annotations was higher than $0.5$, the clip was cataloged as the activity of the ground truth annotation. If the IOU was lower, it was cataloged as background activity. So at the training and validation subsets, the output was encoded with the one-hot encoding, which puts a 1 at the position of the class given and 0s on the rest. This way to encode the output is the used for Softmax output layers which represent the probability of each class to be predicted as the output is between 0 and 1.
 
-% AMAIA: The above paragraph is explaining the evaluation of the output. This does not go here, but later in the experiments section
-% AMAIA: Again, the explanation of how to encode class labels as one-hot vectors should come later.
+% AMAIA: The above paragraph is explaining the evaluation of the output. This does not go here, but later in the experiments section. ALBERTO: NO, this is trying to explain how is set the output for training for each of the 16-frames clips. This is the step of how I pass from a list of temporal annotations to have some 16-frame clips with a class on each.
+% AMAIA: Again, the explanation of how to encode class labels as one-hot vectors should come later. ALBERTO: This is how the output data is prepared. I think that may fit better on the methodology chapter.
 
 
 \section{Training}
+\label{section:training}
+% ALBERTO: I'm aware that there are two sections call training both in methodology and results. May I change the name of this one??
 
 At the time to train, some parameters required to be specified, and some problems appear with them. For training a loss function was chosen, also known as objective function. For the configuration proposed, the best loss function to choose is the categorical cross entropy because the use of Softmax as output which predicts each activity probability and can be considered as a probability distribution. It is computed as follows,
 
@@ -139,7 +141,8 @@ At the time to train, some parameters required to be specified, and some problem
 
 where $q$ is the predicted probability distribution and $p$ the ground truth probability distribution.
 
-Another important parameter to setup for training is the optimizer function. For training Recurrent Neural Networks, the best choice is to use the RMSprop\cite{dauphin2015rmsprop} with a value of $\rho$ of 0.9 and $\epsilon$ of $10^{-8}$. The learning rate, otherwise, have been the value that has need to be tuned. At the training, starting with high values for the learning rate, it was observed that the network did not learned and the validation loss increased instead of decreasing. On the Figure~\ref{fig:training_curves_comparison} can be seen the difference between training the same network with a different values of learning rate. Finally the best learning rate that was found to work better at the time to train is $10^{-5}$.
+%Another important parameter to setup for training is the optimizer function. For training Recurrent Neural Networks, the best choice is to use the RMSprop\cite{dauphin2015rmsprop} with a value of $\rho$ of 0.9 and $\epsilon$ of $10^{-8}$. 
+The learning rate, otherwise, have been the value that has need to be tuned. At the training, starting with high values for the learning rate, it was observed that the network did not learned and the validation loss increased instead of decreasing. On the Figure~\ref{fig:training_curves_comparison} can be seen the difference between training the same network with a different values of learning rate. Finally the best learning rate that was found to work better at the time to train is $10^{-5}$.
 
 \begin{figure}[H]
 \centering
