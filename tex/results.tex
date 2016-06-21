@@ -3,48 +3,6 @@
 
 On this section, the results of the multiple experimentation will be given and detailed.
 
-\section{ActivityNet Dataset}
-
-The ActivityNet Dataset\cite{caba2015activitynet} is \textit{A Large-Scale Video Benchmark for
-Human Activity Understanding}. This dataset (on its version 1.3, the one used for the challenge), contains 19,994 videos with different 200 activities labeled, representing a wide range of human activities. 
-
-\begin{figure}[t]
-\begin{center}
-\includegraphics[width=1\linewidth]{img/methodology/activitynet_examples/activitynet_example_1}
-\includegraphics[width=1\linewidth]{img/methodology/activitynet_examples/activitynet_example_2}
-\includegraphics[width=1\linewidth]{img/methodology/activitynet_examples/activitynet_example_3}
-\includegraphics[width=1\linewidth]{img/methodology/activitynet_examples/activitynet_example_4}
-\includegraphics[width=1\linewidth]{img/methodology/activitynet_examples/activitynet_example_5}
-\includegraphics[width=1\linewidth]{img/methodology/activitynet_examples/activitynet_example_6}
-\end{center}
-\caption{Sample of videos from the ActivityNet Dataset}
-\label{fig:dataset_example}
-\end{figure}
-% AMAIA: I think this section is asking for a figure with some examples of the dataset :). Maybe they have a figure like this in the website or their paper already? ALBERTO: DONE
-
-In total there are 660 hours of video and the subsets are split in the following way: 50\% training set, 25\% validation set and 25\% testing set. Each video of the dataset is annotated with a single activity along with the annotation of all temporal locations in which the activity occurs. On the Figure~\ref{fig:dataset_example} there is examples of videos of different activities and its temporal annotations.
-
-The dataset was provided as a description file, which the URL of the video was provided and also the ground truth annotations for the training and validation subset as a set of starting time, ending time and the activity happening between the given interval. In addition more information was given such as the original video resolution and the duration.
-
-Because all the video from this dataset are hosted on \textit{YouTube}, only the links for the video are provided because of copyright issues. For this reason, the first task was to download all the videos given their URLs. This was done using a library called \textit{youtube-dl}, which allows to download videos from that YouTube using Python. Some issues arose during the acquisition of the dataset, such as videos being removed by their owners, or being blocked due to localization restrictions. In those cases, videos could not be downloaded and therefore were not used in the experiments. The total size of the used dataset was of 19,811 videos.
-
-% AMAIA: I changed some of the text above to be less informal in general... but you should try to do it from this point on.
-
-Once the videos from the dataset were downloaded, the number of frames of each video was extracted to be able in the future to convert from seconds to frames in the temporal domain. 
-
-% AMAIA: I don't understand what you mean in the above text. I guess you want to say that all frames from all videos are used ( no subsampling)? The resolution part I don't get. In any case, this does not belong in this section. You should explain this when you talk about feature extraction.
-% ALBERTO: ok done
-
-In addition to this, some stats were computed. Such as the whole number of frames from all the videos in the dataset which is 65.6 million frames. Also, the length in minutes of each activity at the dataset was plot on Figure~\ref{fig:dataset_stats} to have an idea about the activities duration. As it can be observed, not all the activities have the same duration along the dataset, varying from 40 minutes as the total activity appearance to 3.5 hours for the longest activity. In total, over all the dataset there are 313 hours of activities which need to be detected and localized.
-
-\begin{figure}[h]
-\begin{center}
-\includegraphics[width=1\linewidth]{img/methodology/dataset_stats}
-\end{center}
-\caption{Activity duration in minutes for each activity in the dataset}
-\label{fig:dataset_stats}
-\end{figure}
-
 \section{Evaluation Metric}
 
 In task like classification and detection, the research community and also the ActivityNet Challenge use the same metrics for evaluation to be able to compare results between publications. For the classification tasks, for each instance more than one prediction can be made, and for each prediction giving a the probability of success computed. With this multiple predictions for each instance some metric are computed. The simplest one is the \textit{Hit@k}, which gives you the proportion of the instance where the ground truth is on the \textit{top-k} predictions given. For the ActivityNet Challenge $k$ was set to 3.
@@ -67,7 +25,7 @@ For all the metrics computations of this section, it has been used the evaluatio
 
 \section{Training}
 
-The training of the Recurrent Neural Networks was all done using a 256 batch size and 20 \textit{timesteps} to get a good gradient propagation trought the \textit{timesteps} and to fit the most possible data into the GPUs when training.
+The training of the Recurrent Neural Networks was all done using a 256 batch size and 20 \textit{timesteps} to get a good gradient propagation through the \textit{timesteps} and to fit the most possible data into the GPUs when training.
 
 The optimizer function use was the RMSprop\cite{dauphin2015rmsprop} which is known to work very well for training Recurrent Neural Networks. The RMSprop was set with a value of $\rho$ of 0.9 and $\epsilon$ of $10^{-8}$. The value of the learning rate, as it is explained on Section~\ref{section:training}, was set to $10^{-5}$ for all the experimentation done. 
 
@@ -98,8 +56,8 @@ Architecture & mAP & Hit@3 \\
 
 Once the best architecture was chosen in the sense of deepness, the network was trained comparing the input features used and also comparing the basic architecture with the one that feedback from the previous output. On the Table~\ref{table:classification_by_features} can be seen how the basic architecture and with only features from the video obtain the best results.
 
-It can be due to the fact that training the feedback architecture with the ground truth instances of the previous output may cause inestabilities\cite{}.% ALBERTO: Bibliografia?
-On the other hand, doing some exploration over the videos and its audio tracks, it has been observed that in many cases, the audio was completely unrelated, mostly of having music over any kind of activity hapening on the video. 
+It can be due to the fact that training the feedback architecture with the ground truth instances of the previous output may cause instabilities\cite{}.% ALBERTO: Bibliography?
+On the other hand, doing some exploration over the videos and its audio tracks, it has been observed that in many cases, the audio was completely unrelated, mostly of having music over any kind of activity happening on the video. 
 
 \begin{table}[H]
 \begin{center}
@@ -162,9 +120,9 @@ Personal Care & 0.59931 \\
 \label{fig:map_by_activity_classification}
 \end{figure}
 
-As an extra for visualizing the results on the classification task, at the Figure~\ref{fig:confussion_matrix} on the Appendix it is attached the confussion matrix of the top-1 activity prediction with the ground truth.
+As an extra for visualizing the results on the classification task, at the Figure~\ref{fig:confussion_matrix} on the Appendix it is attached the confusion matrix of the top-1 activity prediction with the ground truth.
 
-At the time to submit the solution proposal to the ActivityNet Challenge 2016, it was chosen the basic architecture with only the video features as input to make the predictions. The results in both validation and test subset submited are displayed on Table~\ref{table:classification_results_challenge}.
+At the time to submit the solution proposal to the ActivityNet Challenge 2016, it was chosen the basic architecture with only the video features as input to make the predictions. The results in both validation and test subset submitted are displayed on Table~\ref{table:classification_results_challenge}.
 
 \begin{table}[H]
 \begin{center}
@@ -229,7 +187,7 @@ between values of $k$ and $\gamma$ on post processing.}
 
 As can be seen, the best performance was achieved with an activity threshold $\gamma=0.2$ and smoothing filter of $k=5$. The effect of the both of the operations performed after the prediction can be seen on Figures~\ref{fig:smoothing_effect} and~\ref{fig:activty_threshold_effect}. On both figures it is displayed temporally the location of the activity at the ground truth of the video and also the prediction done with the proposed network before and after of each of the post-processing.
 
-\begin{figure}[H]
+\begin{figure}[ht]
 \begin{center}
 %\includegraphics[width=1\linewidth]{img/results/smoothing_effect_1}
 %\includegraphics[width=1\linewidth]{img/results/smoothing_effect_2}
@@ -242,17 +200,17 @@ As can be seen, the best performance was achieved with an activity threshold $\g
 \label{fig:smoothing_effect}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[ht]
 \begin{center}
 \includegraphics[width=1\linewidth]{img/results/activity_threshold_effect_1}
 \includegraphics[width=1\linewidth]{img/results/activity_threshold_effect_2}
 \includegraphics[width=1\linewidth]{img/results/activity_threshold_effect_3}
 \end{center}
-\caption{}
+\caption{Activity Localization using different values of the threshold $\gamma$}
 \label{fig:activty_threshold_effect}
 \end{figure}
 
-As it has been done for the classification task, the Average Precision has been computed for the top level activities of the ActivityNet Dataset taxonomy. As can be seen on Table~\ref{table:top_level_detection_ap} and Figure~\ref{fig:top_level_detection_ap} all the top level activities present a similar precision in activity temporal localization except from the category \textit{Personal Care} which does not achieve the half of precision of the rest of top level categories. Also remark that the top level category with highest precision is \textit{Sports, Exercise and Recreation} as happens on the classification task.
+In addition, as it has been done for the classification task, the Average Precision has been computed for the top level activities of the ActivityNet Dataset taxonomy. As can be seen on Table~\ref{table:top_level_detection_ap} and Figure~\ref{fig:top_level_detection_ap} all the top level activities present a similar precision in activity temporal localization except from the category \textit{Personal Care} which does not achieve the half of precision of the rest of top level categories. Also remark that the top level category with highest precision is \textit{Sports, Exercise and Recreation} as happens on the classification task.
 
 \begin{table}[H]
 \begin{center}
@@ -282,17 +240,18 @@ Personal Care & 0.11234 \\
 \label{fig:top_level_detection_ap}
 \end{figure}
 
+
 %%%%%%%%
 I will put a figure plotting the mAP against the IoU asked between 0.1 and 0.5
 %%%%%%%%
 
-Plot with multiple IOU and mAP...
+Plot with multiple IOU and mAP... And maybe a plot of recall vs IoU threshold to see if the network can create good temporal candidates. 
 
 \section{Results Visualization}
 
-To check the behaviour of the proposed model beyond the results of the metrics, at Figure~\ref{fig:results_visualization_classification} there are plot some examples of results in classification task, showing the top 3 activities predicted for the each video. At the same time, at Figure~\ref{fig:results_visualization_detection} there is plot the activity prediction done by the proposed network.
+To check the behavior of the proposed model beyond the results of the metrics, at Figure~\ref{fig:results_visualization_classification} there are plot some examples of results in classification task, showing the top 3 activities predicted for the each video. At the same time, at Figure~\ref{fig:results_visualization_detection} there is plot the activity prediction done by the proposed network.
 
-Even though the challenge required to temporally localize one single activity per video, the proposed network offers more flexibility at the time of prediction. It is capable to predict more than one activity for a video taking the maximum probable activity class after the smoothing filter. With this process, the prediction is a sequence of activities that can be process into multiple temporal activities localizations in a single video. On Figure~\ref{fig:results_visualization_detection_classes} can be seen how would be the prediction. In some cases can be seen how more than one activity class is predicted and would require more exploration over the dataset to check if the predictions may have any sense.
+Even though the challenge required to temporally localize one single activity per video, the proposed network offers more flexibility at the time of prediction. It is capable to predict more than one activity for a video taking the maximum probable activity class after the smoothing filter. With this process, the prediction is a sequence of activities that can be process into multiple temporal activities localization in a single video. On Figure~\ref{fig:results_visualization_detection_classes} can be seen how would be the prediction. In some cases can be seen how more than one activity class is predicted and would require more exploration over the dataset to check if the predictions may have any sense.
 
 \begin{figure}[H]
 \begin{center}
@@ -303,27 +262,21 @@ Even though the challenge required to temporally localize one single activity pe
 \label{fig:results_visualization_classification}
 \end{figure}
 
-
+%%% I'll put two more examples to fill the page on all this 3 figures.
 \begin{figure}[H]
 \begin{center}
 \texttt{Video ID: p1gH8y8X0kA}
 \includegraphics[width=1\linewidth]{img/results/results_visualization_detection_a_1}
 \includegraphics[width=1\linewidth]{img/results/results_visualization_detection_a_2}
-
 \texttt{Video ID: AFb77tjPuwQ}
 \includegraphics[width=1\linewidth]{img/results/results_visualization_detection_b_1}
 \includegraphics[width=1\linewidth]{img/results/results_visualization_detection_b_2}
-
 \texttt{Video ID: w--X02F3MHM}
 \includegraphics[width=1\linewidth]{img/results/results_visualization_detection_c_1}
 \includegraphics[width=1\linewidth]{img/results/results_visualization_detection_c_2}
-
 \texttt{Video ID: cXY-ONmtylc}
 \includegraphics[width=1\linewidth]{img/results/results_visualization_detection_d_1}
 \includegraphics[width=1\linewidth]{img/results/results_visualization_detection_d_2}
-
-
-
 \end{center}
 \caption{Activity prediction done by the proposed neural network.}
 \label{fig:results_visualization_detection}
@@ -334,25 +287,18 @@ Even though the challenge required to temporally localize one single activity pe
 \texttt{Video ID: En9FemmDusk}
 \includegraphics[width=1\linewidth]{img/results/results_visualization_detection_classes_a_1}
 \includegraphics[width=1\linewidth]{img/results/results_visualization_detection_classes_a_2}
-
 \texttt{Video ID: 6Ke30NtYOC0}
 \includegraphics[width=1\linewidth]{img/results/results_visualization_detection_classes_b_1}
 \includegraphics[width=1\linewidth]{img/results/results_visualization_detection_classes_b_2}
-
 \texttt{Video ID: 32H1n87WgCM}
 \includegraphics[width=1\linewidth]{img/results/results_visualization_detection_classes_c_1}
 \includegraphics[width=1\linewidth]{img/results/results_visualization_detection_classes_c_2}
-
-\texttt{Video ID: feWO_gqAcGk}
+\texttt{Video ID: feWO\_gqAcGk}
 \includegraphics[width=1\linewidth]{img/results/results_visualization_detection_classes_c_1}
 \includegraphics[width=1\linewidth]{img/results/results_visualization_detection_classes_c_2}
-
 \end{center}
-\caption{Activity predicted from video doing non maximum supresion at each video clip. Different colors represents different activity classes.}
+\caption{Activity predicted from video doing non maximum suppression at each video clip. Different colors represents different activity classes.}
 \label{fig:results_visualization_detection_classes}
 \end{figure}
 
 
-%%%%%%%
-%Doubt: put the figures as the ground truth and classes predicted in a scale of colors, or plot only the part of the ground truth that has an activity and also the prediction where the activity is placed as at is computed in the post-processing to compare?
-%%%%%%%
