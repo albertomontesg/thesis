@@ -13,49 +13,10 @@ The aim of this project is to design and train a deep neural network to classify
 %In order to get that, the proposal is, once the features have been extracted with the C3D, predict with a RNN a sequence of activities that might be happening for every 16-frame clip. So as the output of the Neural Network, is expected to have a sequence each item giving the activity happening at each video clip as input. This approach offers more advantages that others being able to classify the whole video and even localize along the video sequence them multiple activities happening and their temporal localization.
 
 
-\section{ActivityNet Dataset}
-
-The ActivityNet Dataset\cite{caba2015activitynet} is \textit{A Large-Scale Video Benchmark for
-Human Activity Understanding}. This dataset (on its version 1.3, the one used for the challenge), contains 19,994 videos with different 200 activities labeled, representing a wide range of human activities. 
-
-\begin{figure}[H]
-\begin{center}
-%\includegraphics[width=1\linewidth]{img/methodology/dataset_image}
-\end{center}
-\caption{Frames samples of the ActivityNet Dataset}
-\label{fig:dataset_stats}
-\end{figure}
-% AMAIA: I think this section is asking for a figure with some examples of the dataset :). Maybe they have a figure like this in the website or their paper already?
-
-In total there are 660 hours of video and the subsets are split in the following way: 50\% training set, 25\% validation set and 25\% testing set. Each video of the dataset is annotated with a single activity along with the annotation of all temporal locations in which the activity occurs.
-
-The dataset was provided as a description file, which the URL of the video was provided and also the ground truth annotations for the training and validation subset as a set of starting time, ending time and the activity happening between the given interval. In addition more information was given such as the original video resolution and the duration.
-
-Because all the video from this dataset are hosted on \textit{YouTube}, only the links for the video are provided because of copyright issues. For this reason, the first task was to download all the videos given their URLs. This was done using a library called \textit{youtube-dl}, which allows to download videos from that YouTube using Python. Some issues arose during the acquisition of the dataset, such as videos being removed by their owners, or being blocked due to localization restrictions. In those cases, videos could not be downloaded and therefore were not used in the experiments. The total size of the used dataset was of 19,811 videos.
-
-% AMAIA: I changed some of the text above to be less informal in general... but you should try to do it from this point on.
-
-Once the videos from the dataset were downloaded, the number of frames of each video was extracted to be able in the future to convert from seconds to frames in the temporal domain. 
-
-% AMAIA: I don't understand what you mean in the above text. I guess you want to say that all frames from all videos are used ( no subsampling)? The resolution part I don't get. In any case, this does not belong in this section. You should explain this when you talk about feature extraction.
-% ALBERTO: ok done
-
-In addition to this, some stats were computed. Such as the whole number of frames from all the videos in the dataset which is 65.6 million frames. Also, the length in minutes of each activity at the dataset was plot on Figure~\ref{fig:dataset_stats} to have an idea about the activities duration. As it can be observed, not all the activities have the same duration along the dataset, varying from 40 minutes as the total activity appearance to 3.5 hours for the longest activity. In total, over all the dataset there are 313 hours of activities which need to be detected and localized.
-
-\begin{figure}[H]
-\begin{center}
-\includegraphics[width=1\linewidth]{img/methodology/dataset_stats}
-\end{center}
-\caption{Activity duration in minutes for each activity in the dataset}
-\label{fig:dataset_stats}
-\end{figure}
 
 \section{Extracting Video Features Using C3D}
 
-The C3D network\cite{tran2014learning} was chosen as a feature extractor, due to its success in other works in the literature \cite{baccouche2011sequential,tran2015deep,tran2014learning,shoutemporal}. This network is composed of 8 convolutional layers, plus 5 pooling layers and 2 fully-connected layers at the end. The convolutional layers have $3 \times 3 \times 3$\footnote{For notation, the dimension ordering is $d \times k \times k$ where $d$ is temporal dimension and $k$ is spatial dimension} kernels and stride 1 while at the same time the pooling layers compute the maximum at every kernel size of $2 \times 2 \times 2$ (except from the first pooling layer which has a $1 \times 2 \times 2$ kernel size). Figure~\ref{fig:c3d_architecture} shows a representation of the C3D architecture, including the number of kernels or neurons of each convolutional layer and fully-connected layer.
-%%TODO add references
-
-Talk about sampling in the features extraction
+The C3D network\cite{tran2014learning} was chosen as a feature extractor, due to its success in other works in the literature \cite{baccouche2011sequential,tran2015deep,tran2014learning,shoutemporal}. This network is composed of 8 convolutional layers, plus 5 pooling layers, 2 fully-connected layers and a Softmax output at the end. The convolutional layers have $3 \times 3 \times 3$\footnote{For notation, the dimension ordering is $d \times k \times k$ where $d$ is temporal dimension and $k$ is spatial dimension} kernels and stride 1 while at the same time the pooling layers compute the maximum at every kernel size of $2 \times 2 \times 2$ (except from the first pooling layer which has a $1 \times 2 \times 2$ kernel size). The two full-connected layers (\textit{fc6} and \textit{fc7}) have both 4096 neurons while the Softmax output has 200 outputs as the number of classes of the Sports1M Dataset. Figure~\ref{fig:c3d_architecture} shows a representation of the C3D architecture, including the number of kernels or neurons of each convolutional layer and fully-connected layer respectively.
 
 \begin{figure}[H]
 \begin{center}
@@ -65,25 +26,33 @@ Talk about sampling in the features extraction
 \label{fig:c3d_architecture}
 \end{figure}
 
-The original paper proposing and studying 3D convolutions applied to videos, also give code to reproduce it. The code given was based on a version of \textit{Caffe}\cite{jia2014caffe} dated in 2014. Because the code to use 3D convolutions did not support last features and did not work with the \textit{Python} environment used for this project, the model trained with C3D and the Sports1M\cite{KarpathyCVPR14} dataset was ported to \textit{Keras}\footnote{All the process has been open sourced and can be found in: \url{https://gist.github.com/albertomontesg/d8b21a179c1e6cca0480ebdf292c34d2}}. Keras is a deep learning framework that works over \textit{Theano}\cite{theano2016theano} and \textit{TensorFlow}\cite{abadi2016tensorflow}, two computational frameworks which allow run and train deep learning models over either CPU and GPU. For this work, \textit{Theano} was used as back-end to do the computations because their support for 3D convolutions operations.
+The input of the network are clips of videos of 112x112 frames width and height and 16 frames of temporal depth. It was decided to extract the video features at the full-connected layer \textit{fc6} because being the first after the convolutional features. It has been commonly used the values of the convolutional layers or after them as image and video feature extractors.
+
+The original paper proposing and studying 3D convolutions applied to videos, also give code to reproduce it. The code given was based on a version of \textit{Caffe}\cite{jia2014caffe} dated in 2014. Because the code to use 3D convolutions did not support last features (such as Recurrent Neural Networks) and did not work with the \textit{Python} environment used for this project, the model trained with C3D and the Sports1M\cite{KarpathyCVPR14} dataset was ported to \textit{Keras}\footnote{All the process has been open sourced and can be found in: \url{https://gist.github.com/albertomontesg/d8b21a179c1e6cca0480ebdf292c34d2}}.
 
 % AMAIA. Comments for the above text:
-% 1. The sentence explaining what keras is should go someplace else (maybe in the requirements section ?)
-% 2. I thought we did not use caffe because it does not support RNNs (at least not the 'vanilla' version right?)
+% 1. The sentence explaining what keras is should go someplace else (maybe in the requirements section ?) ALBERTO: Put on requirements.
+% 2. I thought we did not use caffe because it does not support RNNs (at least not the 'vanilla' version right?) RIGHT
 
-At the time to run the C3D model on the model ported to \textit{Keras}, some small changes were applied Keras' source code\footnote{The fork of \textit{Keras} used can be found in: \url{https://github.com/albertomontesg/keras/tree/develop}}, involving the implementation of the 3D convolution and 3D pooling operations. Once this was fixed, all the videos were forwarded through the C3D model, and the features from the first fully connected layer \textit{fc6} were extracted. This process was done using 2 GPUs in parallel for feature extraction, and multiple CPU cores fetching all the videos from disk.  The usage of 2 GPUs in parallel reduced the computational time expected for this task from 1 week to 2 days.
+%%%% KEEP going here
 
-% AMAIA: I think that before the above paragraph you should say that you use 16-frame clips, and that you extract a fc6 for each of them.
 
-In the process of fetching the videos from disk, the \textit{OpenCV}\cite{opencv_library} library was used. With this software, the videos were read in chunks of 16 frames, resized to 112x112 as input frame size and then forwarded through the C3D network. The output of the model, a sequence of 4096-sized vectors where stored in disk for preparing it to train the Recurrent Neural Network. % AMAIA: fc6 is not the output of the model, but the features that you chose to extract
+
+At the time to run the C3D model on the model ported to \textit{Keras}, some small changes were applied Keras' source code\footnote{The fork of \textit{Keras} used can be found in: \url{https://github.com/albertomontesg/keras/tree/develop}}, involving the implementation of the 3D convolution and 3D pooling operations. Once this was fixed, all the videos were forwarded through the C3D model, and the features from the first fully connected layer \textit{fc6} were extracted. This process was done using 2 GPUs in parallel for feature extraction, and multiple CPU cores fetching all the videos from disk. The usage of 2 GPUs in parallel reduced the computational time expected for this task from 1 week to 2 days.
+
+% AMAIA: I think that before the above paragraph you should say that you use 16-frame clips, and that you extract a fc6 for each of them. ALBERTO: I think that now done. 
+
+In the process of fetching the videos from disk, the \textit{OpenCV}\cite{opencv_library} library was used. With this software, the videos were read in chunks of 16 frames, resized to 112x112 as input frame size, remove the mean for each color channel which the original model was trained with and then forwarded through the C3D network. The values of the model at the full-connected layer fc6, a sequence of 4096-sized vectors was stored in disk for preparing it to train the Recurrent Neural Network. % AMAIA: fc6 is not the output of the model, but the features that you chose to extract. ALBERTO: Change
 
 \section{Extracting Audio Features}
 
-The audio features extracted: MFCC and Spectral
+The next step after extracting the video features is to extract the features coming from the videos audio track. As has been done previously for activity detection~\cite{xu2015uts}, some audio descriptors were extracted to improve the detection and classification results. On this project, the MFCC and Spectral descriptors were decided to be used as they extract a lot of information from the videos' audio~\cite{heittola2013context}. 
 
-I require to ask Ignasi for references. How much importance I have to make to the audio features. At the results adding audio features does not improve the results with only the video features.
+Both MFCC and Spectral descriptors were extracted using specialized software: SPro~\cite{gravier2010spro} and Essentia~\cite{bogdanov2013essentia} respectively. For the MFCC descriptors, 40 values were extracted for 10ms temporal windows. Because the misalignment of scale between the features extracted for video and MFCC videos, the second ones were grouped to have the same sequence length of audio features and video features. 
 
-%%TODO: Ask for bibliography
+In order to not loose too much information at the time to group the features, the mean and standard deviations along the temporal scale were computed so at the end 80 values were available to represent the MFCC features from the audio video's track.
+
+On the other hand, the Spectral features were extracted to have information about the energy distribution on the frequency domain along the video so only 8 values were extracted for each videos. At the time to give the audio features at the input of the Recurrent Neural Network, for each video clip feature vector, it was concatenated the MFCC features grouped for the temporal window of the clip and then also concatenated the spectral features of the whole video the clip belong. 
 
 \section{Networks Configuration}
 
@@ -124,13 +93,16 @@ For this network, a new input was added to the video features which was the one-
 
 \section{Data Preparation}
 
-% AMAIA: You should add a section explaining your architecture before you start talking about how to train it ! So basically section 3.6 should come before this one.
+At training neural networks, both the input and output data are grouped in batches to perform parallel and faster computations of the learning algorithm. This batches have the same size and contains a multiple fixed length sequence of both inputs and outputs of the dataset. The length of the sequence given at each batch is called \textit{timestep} and must a value not very high as the gradient propagate along all the sequence, and if it is high, the gradient might achieve high values known as \textit{exploiting gradient}.
+
+Since in all major video datasets, videos are not from the same length, the videos data must be carefully prepared. It is required, if the goal is learn from long sequence data, as it is the videos of the dataset, to keep the memory of the LSTM alive for long sequences. 
+% AMAIA: You should add a section explaining your architecture before you start talking about how to train it ! So basically section 3.6 should come before this one. ALBERTO:DONE
 
 % AMAIA: A friendly intro explaining that  deep nets are usually trained on batches, which contain many samples of the dataset (of the same size)and are processed in parallel. The problem you have is that videos are too long and therefore do not fit in a single batch (risk of exploding gradients as well), so you need to cut them in pieces to separate them in different batches, and also make sure that LSTM memory is preserved from batch to batch.
 
-Since all the videos on the ActivityNet Dataset are not from the same length, to train a recurrent neural network, it requires to give it a fixed length sequence. This length is called \textit{timestep} and must be a value not very high because as the gradient propagates along all the sequence, if the timestep is very high, the gradient might achieve very high values known as \textit{exploiting gradient}.
+% REMOVED: Since all the videos on the ActivityNet Dataset are not from the same length, to train a recurrent neural network, it requires to give it a fixed length sequence. This length is called \textit{timestep} and must be a value not very high because as the gradient propagates along all the sequence, if the timestep is very high, the gradient might achieve very high values known as \textit{exploiting gradient}.
 
-There are two main solutions to this, in order to keep the memory state of the LSTM cells for a long sequences. The first solution would require to clip the gradients as it is explained in \cite{pascanu2012difficulty}. The second solution is to train the Recurrent Neural Network without resetting the memory from batch to batch. With this approach, if a video sequence is longer than the \textit{timestep}, the RNN can be trained passing fragments of the videos as clips one after the other in different batches, but at the same batch position. Since the memory is not reset after each batch, the video sequence is processed smoothly. For this configuration, the different videos must be carefully set on the same batch index to exploit the \textit{Keras} functionality of stateful training for RNNs.
+There are two main solutions to this problem. The first solution is to have the data in batches with large \textit{timestep} but it would require to clip the gradients as it is explained in \cite{pascanu2012difficulty}. The second solution is to train the Recurrent Neural Network without resetting the memory from batch to batch. With this approach, if a video sequence is longer than the \textit{timestep}, the RNN can be trained passing fragments of the videos as clips one after the other in different batches, but at the same batch position. Since the memory is not reset after each batch, the video sequence is processed smoothly. For this configuration, the different videos must be carefully set on the same batch index to exploit the \textit{Keras} functionality of stateful training for RNNs.
 
 \begin{figure}[H]
 \begin{center}

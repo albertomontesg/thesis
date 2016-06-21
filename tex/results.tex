@@ -3,6 +3,48 @@
 
 On this section, the results of the multiple experimentation will be given and detailed.
 
+\section{ActivityNet Dataset}
+
+The ActivityNet Dataset\cite{caba2015activitynet} is \textit{A Large-Scale Video Benchmark for
+Human Activity Understanding}. This dataset (on its version 1.3, the one used for the challenge), contains 19,994 videos with different 200 activities labeled, representing a wide range of human activities. 
+
+\begin{figure}[t]
+\begin{center}
+\includegraphics[width=1\linewidth]{img/methodology/activitynet_examples/activitynet_example_1}
+\includegraphics[width=1\linewidth]{img/methodology/activitynet_examples/activitynet_example_2}
+\includegraphics[width=1\linewidth]{img/methodology/activitynet_examples/activitynet_example_3}
+\includegraphics[width=1\linewidth]{img/methodology/activitynet_examples/activitynet_example_4}
+\includegraphics[width=1\linewidth]{img/methodology/activitynet_examples/activitynet_example_5}
+\includegraphics[width=1\linewidth]{img/methodology/activitynet_examples/activitynet_example_6}
+\end{center}
+\caption{Sample of videos from the ActivityNet Dataset}
+\label{fig:dataset_example}
+\end{figure}
+% AMAIA: I think this section is asking for a figure with some examples of the dataset :). Maybe they have a figure like this in the website or their paper already? ALBERTO: DONE
+
+In total there are 660 hours of video and the subsets are split in the following way: 50\% training set, 25\% validation set and 25\% testing set. Each video of the dataset is annotated with a single activity along with the annotation of all temporal locations in which the activity occurs. On the Figure~\ref{fig:dataset_example} there is examples of videos of different activities and its temporal annotations.
+
+The dataset was provided as a description file, which the URL of the video was provided and also the ground truth annotations for the training and validation subset as a set of starting time, ending time and the activity happening between the given interval. In addition more information was given such as the original video resolution and the duration.
+
+Because all the video from this dataset are hosted on \textit{YouTube}, only the links for the video are provided because of copyright issues. For this reason, the first task was to download all the videos given their URLs. This was done using a library called \textit{youtube-dl}, which allows to download videos from that YouTube using Python. Some issues arose during the acquisition of the dataset, such as videos being removed by their owners, or being blocked due to localization restrictions. In those cases, videos could not be downloaded and therefore were not used in the experiments. The total size of the used dataset was of 19,811 videos.
+
+% AMAIA: I changed some of the text above to be less informal in general... but you should try to do it from this point on.
+
+Once the videos from the dataset were downloaded, the number of frames of each video was extracted to be able in the future to convert from seconds to frames in the temporal domain. 
+
+% AMAIA: I don't understand what you mean in the above text. I guess you want to say that all frames from all videos are used ( no subsampling)? The resolution part I don't get. In any case, this does not belong in this section. You should explain this when you talk about feature extraction.
+% ALBERTO: ok done
+
+In addition to this, some stats were computed. Such as the whole number of frames from all the videos in the dataset which is 65.6 million frames. Also, the length in minutes of each activity at the dataset was plot on Figure~\ref{fig:dataset_stats} to have an idea about the activities duration. As it can be observed, not all the activities have the same duration along the dataset, varying from 40 minutes as the total activity appearance to 3.5 hours for the longest activity. In total, over all the dataset there are 313 hours of activities which need to be detected and localized.
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=1\linewidth]{img/methodology/dataset_stats}
+\end{center}
+\caption{Activity duration in minutes for each activity in the dataset}
+\label{fig:dataset_stats}
+\end{figure}
+
 \section{Evaluation Metric}
 
 In task like classification and detection, the research community and also the ActivityNet Challenge use the same metrics for evaluation to be able to compare results between publications. For the classification tasks, for each instance more than one prediction can be made, and for each prediction giving a the probability of success computed. With this multiple predictions for each instance some metric are computed. The simplest one is the \textit{Hit@k}, which gives you the proportion of the instance where the ground truth is on the \textit{top-k} predictions given. For the ActivityNet Challenge $k$ was set to 3.
@@ -122,7 +164,7 @@ Personal Care & 0.59931 \\
 \end{figure}
 
 %%%%%%%%%%%
-You think the confusion matrix is good idea to putting on the memory
+You think the confusion matrix is good idea to putting on the memory. Annex!!!!
 %%%%%%%%%%%
 
 At the time of submitting the predictions made with the best model for the testing dataset the mAP obtained was of $0.58741$ and the Hi@3 of $0.75548$.
