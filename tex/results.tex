@@ -254,31 +254,67 @@ To check the behavior of the proposed model beyond the results of the metrics, a
 Even though the challenge required to temporally localize one single activity per video, the proposed network offers more flexibility at the time of prediction. It is capable to predict more than one activity for a video taking the maximum probable activity class after the smoothing filter. With this process, the prediction is a sequence of activities that can be process into multiple temporal activities localization in a single video. On Figure~\ref{fig:results_visualization_detection_classes} can be seen how would be the prediction. In some cases can be seen how more than one activity class is predicted and would require more exploration over the dataset to check if the predictions may have any sense.
 
 \begin{figure}[H]
-\begin{center}
-\texttt{Video ID: ArzhjEk4j_Y
-Main Activity: Building sandcastles
-0.7896	Building sandcastles
-0.0073	Doing motocross
-0.0049	Beach soccer}
-\includegraphics[width=0.5\linewidth]{img/results/results_visualization_classification_1}
-\texttt{Video ID: c-zbA4zixfE
-Main Activity: Throwing darts
-0.7325	Throwing darts
-0.1364	Baking cookies
-0.0254	Playing blackjack}
-\includegraphics[width=0.5\linewidth]{img/results/results_visualization_classification_2}
-\texttt{Video ID: 7rpq2RXAoKE
-Main Activity: Using the monkey bar
-0.9381	Using the monkey bar
-0.0563	Swinging at the playground
-0.0011	Fun sliding down}
-\includegraphics[width=0.5\linewidth]{img/results/results_visualization_classification_3}
-%%%% Still have to do it
-%\includegraphics[width=1\linewidth]{img/results/results_visualization_classification}
-\end{center}
+\centering
+\begin{subfigure}[b]{.4\textwidth}
+  \texttt{Video ID: ArzhjEk4j\_Y \\
+  Activity: Building sandcastles \\
+  \\
+  Prediction: \\
+  0.7896	Building sandcastles \\
+  0.0073	Doing motocross \\
+  0.0049	Beach soccer \\}
+\end{subfigure}%
+\begin{subfigure}[b]{.6\textwidth}
+  \centering
+\includegraphics[width=0.95\linewidth]{img/results/results_visualization_classification_1}
+\end{subfigure}
+
+\begin{subfigure}[b]{.4\textwidth}
+  \texttt{Video ID: c-zbA4zixfE \\
+  Activity: Throwing darts \\
+  \\
+  Prediction: \\
+  0.7325	Throwing darts \\
+  0.1364	Baking cookies \\
+  0.0254	Playing blackjack \\}
+\end{subfigure}%
+\begin{subfigure}[b]{.6\textwidth}
+  \centering
+\includegraphics[width=0.95\linewidth]{img/results/results_visualization_classification_2}
+\end{subfigure}
+
+\begin{subfigure}[b]{.4\textwidth}
+  \texttt{Video ID: 7rpq2RXAoKE \\
+  Activity: Using the monkey bar \\
+  \\
+  Prediction: \\
+  0.9381	Using the monkey bar \\
+  0.0563	Swinging at the playground \\
+  0.0011	Fun sliding down \\}
+\end{subfigure}%
+\begin{subfigure}[b]{.6\textwidth}
+  \centering
+\includegraphics[width=0.95\linewidth]{img/results/results_visualization_classification_3}
+\end{subfigure}
+
+\begin{subfigure}[b]{.4\textwidth}
+  \texttt{Video ID: VrNHEv6aR38 \\
+  Activity: Playing water polo \\
+  \\
+  Prediction: \\
+  0.7645	Playing water polo \\
+  0.2018	Swimming \\
+  0.0065	Springboard diving\\}
+\end{subfigure}%
+\begin{subfigure}[b]{.6\textwidth}
+  \centering
+\includegraphics[width=0.95\linewidth]{img/results/results_visualization_classification_4}
+\end{subfigure}
+
 \caption{Results for the classification task}
 \label{fig:results_visualization_classification}
 \end{figure}
+
 
 %%% I'll put two more examples to fill the page on all this 3 figures.
 \begin{figure}[H]
