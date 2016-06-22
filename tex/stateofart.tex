@@ -39,7 +39,21 @@ For this C3D network, the input data are clips of videos which all the frames ar
 In addition to spatial and temporal correlations, it has been seen that some approaches extract information from the audio track to explode the information it may give. This technique of combining both video and audio is becoming trendy on the latest activity detection on video datasets\cite{xu2015uts}. The idea of extracting information from the audio in addition to the video seems really interesting but its success on the results are very related to the coherence between the audio and video tracks. 
 % AMAIA: "Bunches", "fed up", too informal...
 
-A more complex and different approach to face activity classification and temporal localization is using Recurrent Neural Networks. This networks are characterize by being trained with sequences of related data and having memory as this networks store information between instances of the sequence. The RNN are mainly used to learn from temporal sequences as text generation or speech recognition, but they have also been used 
+A more complex and different approach to face activity classification and temporal localization is using Recurrent Neural Networks. This networks are characterize by being trained with sequences of related data and having memory as this networks store information between instances of the sequence. The RNN are mainly used to learn from temporal sequences as text generation or speech recognition, but they have also been used in the task related to video.
+
+The most efficient implementation of Recurrent Neural Network found at the literature is the Long Short Term Memory cells\cite{hochreiter1997long}, or also known as LSTM. This cells present internal gates that control the propagation of information along the network and also along the temporal sequence forming a chain as is shown in Figure~\ref{fig:lstm_chain}.
+
+\begin{figure}[ht]
+\begin{center}
+\includegraphics[width=0.8\linewidth]{img/stateofart/lstm_chain}
+\end{center}
+\caption{Example of the Architecture of a Convolutional Neural Network}
+\label{fig:lstm_chain}
+\end{figure}
+
+Talk about paper that use LSTM
+
+Another implementation of Recurrent Neural Network is a cell called Gated Recurrent Unit (GRU)\cite{cho2014learning}. This is a slightly more dramatic variation of the LSTM which combines the forget and input gate into an update gate and has been applied in the task of video classification\cite{ballas2015delving} in conjunction with CNNs.
 
 \section{Convolutional Neural Networks for Activity Classification}
 
