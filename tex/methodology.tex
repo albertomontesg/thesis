@@ -285,7 +285,7 @@ The next step was compute for every step of the output sequence the activity pro
     \end{cases}
 \end{equation}
 
-\textcolor{red}{XAVI: Should not this Equation 3.7 be the same as 3.5 ?}
+%\textcolor{red}{XAVI: Should not this Equation 3.7 be the same as 3.5 ? ALBERTO: NO. in 3.5 it is computed the mean along the sequence, and in 3.7 it is sum the probability of having an activity at each step of the sequence.}
 
 Finally, only those activity detection with $\tilde{p}^a_i$ over a certain probability threshold ~$\gamma$ were considered. The rest were discarded as they did not meet a minimum of confidence. Both parameters $k$ and $\gamma$ were learned also during the training process described in Section~\ref{section:results}
 
