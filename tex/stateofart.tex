@@ -11,6 +11,8 @@
 
 Many works in the literature have explored activity and action recognition problems using deep learning strategies. Most of them can be classified by the deep learning techniques used. Most of them used an approach of two stages (encoder and decoder) to learn from video's dataset. The first stage, the one being consider a decoder, is the stage that tries to encode the visual and temporal information from the input videos into some features vectors or information. The second stage, also known as decoder, tries from the extracted encoded information from the first stage, make a prediction of the output, which can be a classification of the video or a temporal localization of an activity.
 
+\section{Convolutional Neural Networks applied to Videos}
+
 Is very common see that as encoder, use Convolutional Neural Networks (or also known as CNNs) as it has been widely demonstrated that applying CNN networks to images and videos has obtain very good results in classifications tasks. A very well known and used CNN network is the VGG\cite{Simonyan14c} network which was top scored on ImageNet Challenge in 2014 on classification task. This network uses 2D convolutional kernels to extract spatial correlations from images and therefor learn how to classify them. 
 
 Applying this techniques to activity detection, there are some implementations of using 2D Convolutional Neural Networks over the frames\cite{gkioxari2015contextual}\cite{yeung2015end}\cite{ballas2015delving} to extract spatial correlations into the video data. As the video also present temporal correlation, different approaches have been tried to exploit it. The first approach you can find on the literature is to weight the frames at the input\cite{yeung2015every} so information of a chunk of frames is given to the neural network. 
@@ -23,8 +25,7 @@ Applying this techniques to activity detection, there are some implementations o
 \label{fig:cnn_architecture}
 \end{figure}
 
-In addition to this technique, it can be found the computation of the optical flow a solution to codify temporal correlations to train convolutional neural networks\cite{simonyan2014two}\cite{Ng_2015_CVPR}. This techniques extract temporal information but they are limited to the amount of information a 2D space can give, and without letting learn the neural network about temporal information. 
-
+In addition to this technique, it can be found the computation of the optical flow a solution to codify temporal correlations to train convolutional neural networks\cite{simonyan2014two}\cite{Ng_2015_CVPR} with even two streams\cite{wang2015towards}, one for the frame and the other for the optical flow. This techniques extract temporal information but they are limited to the amount of information a 2D space can give, and without letting learn the neural network about temporal information. 
 
 % AMAIA: I think it's a good idea to cover the cited works in more detail. What are their differences? What do they have in common? Do you take ideas from them? What are the differences between what they do and what you do?
 
@@ -39,7 +40,10 @@ For this C3D network, the input data are clips of videos which all the frames ar
 In addition to spatial and temporal correlations, it has been seen that some approaches extract information from the audio track to explode the information it may give. This technique of combining both video and audio is becoming trendy on the latest activity detection on video datasets\cite{xu2015uts}. The idea of extracting information from the audio in addition to the video seems really interesting but its success on the results are very related to the coherence between the audio and video tracks. 
 % AMAIA: "Bunches", "fed up", too informal...
 
-A more complex and different approach to face activity classification and temporal localization is using Recurrent Neural Networks. This networks are characterize by being trained with sequences of related data and having memory as this networks store information between instances of the sequence. The RNN are mainly used to learn from temporal sequences as text generation or speech recognition, but they have also been used in the task related to video.
+
+\section{Recurrent Neural Networks applied to Videos}
+
+A more complex and different approach to face activity classification and temporal localization on videos is using Recurrent Neural Networks. This networks are characterize by being trained with sequences of related data and having memory as this networks store information between instances of the sequence. The RNN are mainly used to learn from temporal sequences as text generation or speech recognition, but they have also been used in the task related to video.
 
 The most efficient implementation of Recurrent Neural Network found at the literature is the Long Short Term Memory cells\cite{hochreiter1997long}, or also known as LSTM. This cells present internal gates that control the propagation of information along the network and also along the temporal sequence forming a chain as is shown in Figure~\ref{fig:lstm_chain}.
 
@@ -51,20 +55,23 @@ The most efficient implementation of Recurrent Neural Network found at the liter
 \label{fig:lstm_chain}
 \end{figure}
 
-Talk about paper that use LSTM
+In most of the literature that use RNN to video, make their implementation using LSTM cells, but with different approaches. Some works propose to predict activities using LSTMs after features extraction after CNNs\cite{yao2015describing} and some others propose to add an attention model before the recurrent stage to let the network learn where to focus the attention\cite{sharma2015action}\cite{piergiovanni2016temporal}. At~\cite{yeung2015every} for example, a Recurrent Neural Network using LSTMs is used after a 2D CNN to predict the activity on videos returning a sequence. Another approach found in the literature is using LSTMs and reinforcement learning to temporally localize activities on videos\cite{yeung2015end} achieving state of the art performance. This achieves very good results without the requirement to have a prediction after seeing all the video frames because with little iterations, the network predicts where the activity is temporally located.
 
-Another implementation of Recurrent Neural Network is a cell called Gated Recurrent Unit (GRU)\cite{cho2014learning}. This is a slightly more dramatic variation of the LSTM which combines the forget and input gate into an update gate and has been applied in the task of video classification\cite{ballas2015delving} in conjunction with CNNs.
+In addition to previous exposed LSTMs, there is a little variation of it which is a cell called Gated Recurrent Unit (GRU)\cite{cho2014learning}. This is a slightly variation of the LSTM which combines the forget and input gate into an update gate and has been applied in the task of video classification\cite{ballas2015delving} in conjunction with CNNs.
 
-\section{Convolutional Neural Networks for Activity Classification}
+\section{Activity Temporal Localization with Multi-Stage CNNs}
 
-Talk about the 
+The work presented in \cite{shoutemporal} is based on Convolutional Neural Networks, more concretely on the C3D network previously explained. It propose to divide each video in multiple length sequences to then for each one predict whether an activity is in there or not, and if so, the activity class on the segment. As the first stage, they propose to subsample the segments obtained from the video to put it as input for the C3D. The next stage consist on three parallel networks which are trained separately. All the three networks are trained doing a fine tunning from the original C3D network\cite{tran2014learning}. 
 
-%%%% Comments
-Now talk about the recurrent neural network architecture proposed in the different papers of the state of the art. Talk about what RNN and LSTM are, some equations?
+The first network classifies the segment to extract if there is any activity or not. The next two networks are trained to predict the activity the segment with the difference of how the loss is computed. This work propose a new way to compute the loss taking into account the intersection over union the segment has with the ground truth annotation to maximize the correct segments predictions. After this three networks, some additional post-processing is done to achieve a temporal localization of the activities. The Figure~\ref{fig:multistage} presents the schema of the pipeline proposed.
 
-% AMAIA: Don't use equations in the state of the art. Maybe later in the methodology
-
-Talk about some architectures interesting in the activity detection field and explain them more detailed (not much detailed but a little)??
+\begin{figure}[ht]
+\begin{center}
+\includegraphics[width=0.8\linewidth]{img/stateofart/multistage}
+\end{center}
+\caption{Multi-stage architecture to temporal action location using CNNs}
+\label{fig:multistage}
+\end{figure}
 
 % AMAIA: Yes, definitely ! I think that what you will explain in later sections is primarily focused on detection, so it is relevant that you explain what people have done in the past, and how your approach differs from them. I think what is interesting in your work is that you don't train in several stages using segment candidates. You train a single network. Ok, it does not improve the results, but the approach is much nicer ideally. 
 

@@ -54,7 +54,23 @@ In addition to the software, specific hardware was required. The high demanding 
 
 \section{Methods and Procedures}
 
-\textcolor{red}{XAVI: I guess you do not know what to write here, is that right ? \\ALBERTO: Right. \\XAVI: I suggest you always follow as a guideline Andrea Calafell's thesis. Here, she offered a summary of her work. You could do the same, by just copying here part of the Abstract you wrote in the working notes. Check Andrea's thesis here: https://imatge.upc.edu/web/publications/fine-tuning-convolutional-network-cultural-event-recognition}
+This project tries to offer a simple and flexible solution to face the tasks classification and temporal localization on videos. The solution proposed is made by a first step stage where the video features are extracted. To do so, a pre-trained 3D convolutional network has been used to extract features from spatial and temporal dimension from video frames. In parallel, features from audio were extracted to combine them with the ones extracted from the video frames.
+
+As a second stage, after having encode all the possible information from video using available implementations, a Recurrent Neural Network was proposed to use to exploit long term relations and predict the sequence of activities available at each video. This network was tested with different architectures and inputs from the previous features extracted. Figure~\ref{fig:global_pipeline} shows an schematic of the proposed pipeline.
+
+\begin{figure}[ht]
+\begin{center}
+\includegraphics[width=0.8\linewidth]{img/introduction/schematic_pipeline}
+\end{center}
+\caption{Global architecture of the solution proposed on this project.}
+\label{fig:global_pipeline}
+\end{figure}
+
+All the tests were done using a recently publish video dataset, the ActivityNet which offers untrimmed videos from 200 activities. All the videos from the dataset present a single activity on it so its possible to classify them globally, furthermore the activities along the video are temporally localized and so the task to do it was the main goal of this project. Most of the effort and architecture was done taking into account resolving the detection task knowing that if you solve the temporal detection, is possible to extrapolate to globally classify videos. 
+
+Moreover, multiple post-processing techniques were proposed to use at the proposed network output to improve the classification and detection tasks. Multiple configurations were tested in order to maximize the results.
+
+Finally, the best results were submitted to the ActivityNet Challenge 2016 at the CVPR.
 
 \section{Work Plan}
 

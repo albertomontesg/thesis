@@ -1,27 +1,39 @@
 \chapter{Results}
 \label{section:results}
 
-On this section, the results of the multiple experimentation will be given and detailed.
+This section describes the results of the experiments on the ActivityNet dataset obtained with teh different variations of our architecture.
 
 \section{Evaluation Metric}
 
-In task like classification and detection, the research community and also the ActivityNet Challenge use the same metrics for evaluation to be able to compare results between publications. For the classification tasks, for each instance more than one prediction can be made, and for each prediction giving a the probability of success computed. With this multiple predictions for each instance some metric are computed. The simplest one is the \textit{Hit@k}, which gives you the proportion of the instance where the ground truth is on the \textit{top-k} predictions given. For the ActivityNet Challenge $k$ was set to 3.
+In task like classification and detection, the research community and also the ActivityNet Challenge use the same metrics for evaluation to be able to compare results between publications. In our work, we have computed our results using the evaluation scripts provided by the ActivityNet Challenge 2016 organization.
 
-In addition to this metric, for classifications tasks, it is mostly use the mean Average Precision (mAP) metric. It is computed as the mean of the average precision of all $M$ classes at the Dataset.
+\subsection{Classification Metrics}
+
+The classification of videos was assessed with the mean Average Precision (mAP). This is computed as the mean of the Average Precision (AP) of all $M$ classes at the Dataset.
 
 \begin{equation}
 	mAP = \frac{1}{M} \sum_{m=1}^{M} AP(m)
 \end{equation}
 
-At the same time, the Average Precision for each class is computed as the average of the precision at position $n$, showed as $P(n)$. This precision is defined as the amount of elements in $k_m$ between positions 1 and $n$ in the ranked list divided by $n$.
+At the same time, the Average Precision for each class is computed based on a ranking of the classes obtained for each video. Classifier typically predict a confidence score for each of the considered classes, and these scores allow generating these rankings from the most to the less likely class to be depicted by the video. The precision $P$ is the inverse of the position where the correct class appears, and the AP for class $m$ is obtaind by averaging all the precision of the videos associated to the class, according to the ground truth. %average of the precision at position $n$, showed as $P(n)$. This precision is defined as the amount of elements in $k_m$ between positions 1 and $n$ in the ranked list divided by $n$.
 
 \begin{equation}
 	AP(m) = \frac{1}{k_m} \sum_{n=1}^{k_m} P(n)
 \end{equation}
 
+As an alterative metric, the $Hit@3$ was also considered. In this case the top 3 predictions are considered for each video, considering a good prediction if the correct class is among them. The $Hit@3$ metric simply measure the proportion of videos in the dataset that are correctly predicted under this assumption. This metric has become popular as adopted in the ImageNet image classification challenge.
+
+\textcolor{red}{XAVI: You should review this definition of AP. I have updated the text but your formula still do not match your text. PLease double check and make sure you understand. }
+
+\subsection{Detection Metrics}
+
 For the other task of the Challenge, the temporal localization or detection as the Challenge name it, the metric use to verify the results given is the Intersection Over Union (IoU). This metric compute a prediction as correct if the IoU of the prediction with the ground truth annotations is higher than a value $\alpha$. Then the mAP is computed. For the ActivityNet Challenge the $\alpha$ value used is 0.5.
 
-For all the metrics computations of this section, it has been used the evaluation scripts given by the ActivityNet Challenge 2016 organization.
+%more than one prediction can be made, and for each prediction giving a the probability of success computed. 
+With this multiple predictions for each video different metrics can be defined. The simplest one is the \textit{Hit@k}, which gives you the proportion of the instance where the ground truth is on the \textit{top-k} predictions given. For the ActivityNet Challenge, $k$ was set to 3.
+
+\textcolor{red}{XAVI: I do not really understand how mAP and Top-1 and Top-3 are computed in ActivityNet. I have an intuition but you should double check this and review these definitions and expressions. Maybe you find the definitions in the original ActivityNet paper. }
+ 
 
 \section{Training}
 
@@ -31,11 +43,17 @@ The optimizer function use was the RMSprop\cite{dauphin2015rmsprop} which is kno
 
 % In order to try to fit the most possible data into the GPUs when training each batch and to get a good gradient propagation along the batch's sequence length, for all the experiments done on this project, the batch size was 256 and the timesteps 20.
 
+\textcolor{red}{XAVI: This section is so small that you may merge it with its counterpart in the Methodology section. It will be much easier to understand if you explain everything in the same section. }
+
 \section{Classification Task}
 
-The first experiments made were related to the Recurrent Neural Network architecture, in order to obtain the best performance. The way to measure the performance, was computing the mAP for the classification task. The different architectures first tested were related to the deep of the network. On the first experiment, it was tested from a 3 layers LSTM with 1024 cells each layer, to a one single layer with 512 cells, going through a two layers network with 512 LSTM cells each one. All the architectures presented a batch normalization after the input entrance and dropout before and after the LSTM layers. Also all the experiments were done exclusively with the features extracted from the C3D network.
-
-As is showed on Table~\ref{table:classification_by_architecture}, the network that achieved the best performance was achieved with the simplest one as was expected while training due to the fact that all the networks presented high learning capacity over our data.
+The first experiments were related to the depth of the network. 
+%The way to measure the performance, was computing the mAP for the classification task. The different experiments  
+It was tested from a 3 layers LSTM with 1024 cells each layer, to a one single layer with 512 cells, going through a two layers network with 512 LSTM cells each one. 
+%All the architectures presented a batch normalization after the input entrance and dropout before and after the LSTM layers. XAVI: You already explained this
+Also all the experiments were done exclusively with the features extracted from the C3D network.
+Table~\ref{table:classification_by_architecture} shows how the simplest RNN achieved the best performance. This results was because all the networks presented high learning capacity over our data.
+\textcolor{red}{XAVI: Did we expect it ? As far as I know, deeper is better... but you may over-fit. Is this maybe the problem ?. }
 
 \begin{table}[H]
 \begin{center}
@@ -54,10 +72,9 @@ Architecture & mAP & Hit@3 \\
 \label{table:classification_by_architecture}
 \end{table}
 
-Once the best architecture was chosen in the sense of deepness, the network was trained comparing the input features used and also comparing the basic architecture with the one that feedback from the previous output. On the Table~\ref{table:classification_by_features} can be seen how the basic architecture and with only features from the video obtain the best results.
-
-It can be due to the fact that training the feedback architecture with the ground truth instances of the previous output may cause instabilities\cite{}.% ALBERTO: Bibliography?
-On the other hand, doing some exploration over the videos and its audio tracks, it has been observed that in many cases, the audio was completely unrelated, mostly of having music over any kind of activity happening on the video. 
+Once the single layer architecture was selected, the network was trained comparing the input features used and also comparing the basic architecture with the one with feedback.  Table~\ref{table:classification_by_features} shows how the basic architecture  with only video features obtain the best results.
+The fail of the feedback architecture may be due to instabilities caused by  training with the ground truth instances\cite{}.% ALBERTO: Bibliography?
+Regarding the audio, doing some manual exploration over the videos and its audio tracks, it was been observed that in some cases, the audio was completely unrelated, mostly with music that had no relationship with the activity depicted by the video. 
 
 \begin{table}[H]
 \begin{center}
@@ -77,9 +94,12 @@ Video w/ audio \& feedback & 0.5652 & 0.7319 \\
 \label{table:classification_by_features}
 \end{table}
 
-The ActivityNet Dataset offers a 200 activities videos, but all this activities come from a taxonomy with hierarchically activities. The 200 activities which are annotated all the videos of the dataset and the proposed network predict are the leaf nodes of the taxonomy tree. On this structure there is 5 top level categories which all the videos belongs and describe more generally the activity happening on the video. These are: \textit{Eating and drinking activities}, \textit{Sports, Exercise and Recreation}, \textit{Household Activities}, \textit{Socializing, Relaxing and Leisure}, \textit{Personal Care}.
-
-For all these top level activities, the mean average precision has been computed. To do so, all the predicted and ground truth activity labels have been changed by its top level activity and then for each of them computed the Average Precision. As can be seen on Table~\ref{table:top_level_classification_ap} and Figure~\ref{table:top_level_classification_ap} the \textit{Sports, Exercise and Recreation} have an average precision of $94\%$. This can be explained with the fact that all the features extracted from the videos come from a network which weights were trained to work with a dataset of videos, the Sports1M\cite{KarpathyCVPR14}.
+The ActivityNet Dataset is organized in 200 activities, and these activities are also contained in a taxonomy, in particular, at the leaves of a hierarchical structure. 
+%. The 200 activities which are annotated all the videos of the dataset and the proposed network predict are the leaf nodes of the taxonomy tree. 
+On this structure there are 5 top level categories that describe higher level of abstraction: \textit{Eating and drinking activities}, \textit{Sports, Exercise and Recreation}, \textit{Household Activities}, \textit{Socializing, Relaxing and Leisure}, \textit{Personal Care}.
+The mean average precision was also computed for these 5 top level activities. 
+%To do so, all the predicted and ground truth activity labels have been changed by its top level activity and then for each of them computed the Average Precision. 
+As can be seen on Table~\ref{table:top_level_classification_ap} and Figure~\ref{table:top_level_classification_ap} the \textit{Sports, Exercise and Recreation} have an average precision of $94\%$. This can be explained with the fact that all the features extracted from the videos come from a network which weights were trained to work with a dataset of videos, the Sports1M\cite{KarpathyCVPR14}.
 
 \begin{table}[H]
 \begin{center}
@@ -111,6 +131,8 @@ Personal Care & 0.59931 \\
 \end{figure}
 
 
+\textcolor{red}{XAVI: You did not comment on Figure \ref{fig:map_by_activity_classificatio}. Add a paragraph about it.}
+
  %%% Better giving this figure or the one with all the activities and see that mAP varies a lot from one activity to another?
 \begin{figure}[H]
 \begin{center}
@@ -120,9 +142,9 @@ Personal Care & 0.59931 \\
 \label{fig:map_by_activity_classification}
 \end{figure}
 
-As an extra for visualizing the results on the classification task, at the Figure~\ref{fig:confussion_matrix} on the Appendix it is attached the confusion matrix of the top-1 activity prediction with the ground truth.
 
-At the time to submit the solution proposal to the ActivityNet Challenge 2016, it was chosen the basic architecture with only the video features as input to make the predictions. The results in both validation and test subset submitted are displayed on Table~\ref{table:classification_results_challenge}.
+
+At the time of submission to the ActivityNet Challenge 2016, the basic architecture was chosen by using the video features only. The results in both validation and test subset are shown in Table~\ref{table:classification_results_challenge}.
 
 \begin{table}[H]
 \begin{center}
@@ -135,18 +157,22 @@ Test & 0.5874 & 0.7554 \\
 \hline
 \end{tabular}
 \end{center}
-\caption{Results submitted to the ActivityNet Challenge 2016 for the classification task.}
+\caption{Results of the UPC team at the ActivityNet Challenge 2016 for the classification task.}
 \label{table:classification_results_challenge}
 \end{table}
+
+As an extra visualization of the results for the classification task, at the Figure~\ref{fig:confussion_matrix} on the Appendix it is attached the confusion matrix of the top-1 activity prediction with the ground truth.
 
 
 
 \section{Detection Task}
 
-As the main goal of this project is to obtain a good network to temporally localize activities on videos, it has been compared the results on the detection task of the ActivityNet Challenge for the two architectures proposed. For the basic architecture the network was feed up with video features from the C3D network, while on the feedback architecture, the audio features were concatenated at the input as in classification task improve the results (check Table~\ref{table:classification_by_features}).
+The main goal of this project is to temporally localize activities on videos. The results obtained are presented in Table \ref{table:detection_architecture_comparison}, considering two architectures: the basic architecture with video features, and the feedback architecture with video and audio features concatenated (this concatenation helped for the classification task, as shown in Table~\ref{table:classification_by_features}).
+The basic architecture obatins a slightly better results. 
 
 %%%%%%%%
 How I justify the feedback architecture does not give best results than the basic one?
+\textcolor{red}{XAVI: I think you already did earlier, right ? No need to repeat here, or just refer to the same argument exposed before.}
 %%%%%%%%
 
 \begin{table}[H]
@@ -164,9 +190,9 @@ Feedback Architecture & 0.20676 \\
 \label{table:detection_architecture_comparison}
 \end{table}
 
-As shows the Table~\ref{table:detection_architecture_comparison} the basic architecture get a slightly better results. The computation of the mean average precision was done doing the same post-processing to the predicted output of the network proposed on this project.
-
-As it was explained on Section~\ref{section:post_processing}, a post-processing was done to the output to achieve a smoother and better temporal prediction of the activities. During this project there were performed some experiments to maximize the prediction precision for different values of $\gamma$ as the activity probability threshold and $k$ as smoothing factor for the mean filter. For different combinations of these variables it was performed the Table~\ref{table:detection_postprocessing_comparison}.
+The detection task included as post-processing stage described in Section~\ref{section:post_processing}, which aimed at a smoother and better temporal prediction of the activities. 
+The parameters of this post-processing where also jointly estimated, as shown in Table~\ref{table:detection_postprocessing_comparison}.
+These were $\gamma$ as the activity probability threshold, and $k$ as the window size for the mean filter.
 
 \begin{table}[H]
 \begin{center}
@@ -185,7 +211,7 @@ between values of $k$ and $\gamma$ on post processing.}
 \label{table:detection_postprocessing_comparison}
 \end{table}
 
-As can be seen, the best performance was achieved with an activity threshold $\gamma=0.2$ and smoothing filter of $k=5$. The effect of the both of the operations performed after the prediction can be seen on Figures~\ref{fig:smoothing_effect} and~\ref{fig:activty_threshold_effect}. On both figures it is displayed temporally the location of the activity at the ground truth of the video and also the prediction done with the proposed network before and after of each of the post-processing.
+As it can be seen, the best performance was achieved with an activity threshold $\gamma=0.2$ and smoothing filter of $k=5$. The effect of the both of the operations performed after the prediction can be seen in Figures~\ref{fig:smoothing_effect} and~\ref{fig:activty_threshold_effect}. On both figures the temporally the location of the activity at the ground truth and at the prediction are displayed, before and after of each of the post-processing.
 
 \begin{figure}[ht]
 \begin{center}
@@ -210,7 +236,7 @@ As can be seen, the best performance was achieved with an activity threshold $\g
 \label{fig:activty_threshold_effect}
 \end{figure}
 
-In addition, as it has been done for the classification task, the Average Precision has been computed for the top level activities of the ActivityNet Dataset taxonomy. As can be seen on Table~\ref{table:top_level_detection_ap} and Figure~\ref{fig:top_level_detection_ap} all the top level activities present a similar precision in activity temporal localization except from the category \textit{Personal Care} which does not achieve the half of precision of the rest of top level categories. Also remark that the top level category with highest precision is \textit{Sports, Exercise and Recreation} as happens on the classification task.
+In addition, as it has been done for the classification task, the Average Precision has been computed for the top level activities of the ActivityNet Dataset taxonomy. As can be seen on Table~\ref{table:top_level_detection_ap} and Figure~\ref{fig:top_level_detection_ap}, all the top level activities present a similar precision in activity temporal localization except from the category \textit{Personal Care}, which does not achieve  half of the precision of the rest of top level categories. Also notice that the top level category with highest precision is \textit{Sports, Exercise and Recreation}, similarly as in the classification task.
 
 \begin{table}[H]
 \begin{center}
@@ -243,15 +269,22 @@ Personal Care & 0.11234 \\
 
 %%%%%%%%
 I will put a figure plotting the mAP against the IoU asked between 0.1 and 0.5
+\textcolor{red}{XAVI: Do not forget.}
 %%%%%%%%
 
 Plot with multiple IOU and mAP... And maybe a plot of recall vs IoU threshold to see if the network can create good temporal candidates. 
 
-\section{Results Visualization}
+\section{Qualitative evaluation}
 
-To check the behavior of the proposed model beyond the results of the metrics, at Figure~\ref{fig:results_visualization_classification} there are plot some examples of results in classification task, showing the top 3 activities predicted for the each video. At the same time, at Figure~\ref{fig:results_visualization_detection} there is plot the activity prediction done by the proposed network.
+The behavior of the presented model is further analyzed with some qualitative results shown in Figure~\ref{fig:results_visualization_classification}. It presents some examples for classification task, showing the top 3 activities predicted for the each video. Analogously, Figure~\ref{fig:results_visualization_detection} includes a plot the activity detection in time.
 
-Even though the challenge required to temporally localize one single activity per video, the proposed network offers more flexibility at the time of prediction. It is capable to predict more than one activity for a video taking the maximum probable activity class after the smoothing filter. With this process, the prediction is a sequence of activities that can be process into multiple temporal activities localization in a single video. On Figure~\ref{fig:results_visualization_detection_classes} can be seen how would be the prediction. In some cases can be seen how more than one activity class is predicted and would require more exploration over the dataset to check if the predictions may have any sense.
+Even though the challenge required to temporally localize one single activity per video, the proposed network is capable of predicting multiple classes of activities in a video, just by considering the most probable activity after the smoothing filter. 
+%With this process, the prediction is a sequence of activities that can be process into multiple temporal activities localization in a single video. 
+Figure~\ref{fig:results_visualization_detection_classes} shows a case of multiclass activity detection, which proves our claim.
+Notice that this multiclass scenario was not considered for the ActivityNet challenge, so no videos nor annotations are available for its evaluation.
+%how a multiclass detection would be the prediction. In some cases can be seen how more than one activity class is predicted and would require more exploration over the dataset to check if the predictions may have any sense.
+
+\textcolor{red}{XAVI: All examples you show are perfect. It would be nice to find some "error" that maybe you could explain why the model is confused. Otherwise the examples are a bit boring :)}
 
 \begin{figure}[H]
 \centering
