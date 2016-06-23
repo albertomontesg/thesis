@@ -71,8 +71,6 @@ The C3D model \cite{tran2014learning} was developed over a version of \textit{Ca
 % 1. The sentence explaining what keras is should go someplace else (maybe in the requirements section ?) ALBERTO: Put on requirements.
 % 2. I thought we did not use caffe because it does not support RNNs (at least not the 'vanilla' version right?) RIGHT
 
-%%%% KEEP going here
-
 At the time to run the C3D model on the model ported to \textit{Keras}, some small changes were applied Keras' source code\footnote{The fork of \textit{Keras} used can be found in: \url{https://github.com/albertomontesg/keras/tree/develop}}, involving the implementation of the 3D convolution and 3D pooling operations. Once this was fixed, all the videos were forwarded through the C3D model, and the features from the first fully connected layer \textit{fc6} were extracted. This process used 2 GPUs in parallel for feature extraction, and multiple CPU cores fetching all the videos from disk. The usage of 2 GPUs in parallel reduced the computational time expected for this task from 1 week to 2 days.
 
 % AMAIA: I think that before the above paragraph you should say that you use 16-frame clips, and that you extract a fc6 for each of them. ALBERTO: I think that now done. 
@@ -227,7 +225,7 @@ For the classification task, what was done as the first stage was remove the out
 With this operation, there is for each video in the dataset a vector of probabilities, each one giving the probability of each activity happening along the video. All the values given by this vector where the ones used to make the prediction, taking the activity highest probable as the video activity and the probability of prediction computed as the score.
 
 \subsection{Detection Task}
- 
+
 For the detection task of the ActivityNet Challenge, or temporal activity localization, more operations were required in order to predict temporal annotations on the temporal dimension. As is known that at every video of the ActivityNet Dataset all the annotation are of the same activity, the classification activity was first computed and give it as solution for all the temporal localization.
 
 Working with the sequence probabilities predicted by the Neural Network, a mean filter was applied. This mean filter has a parameter $k$ which represent the number of clips behind and forward that delimiter the window to compute the mean. The way to compute it is described on Equation~\ref{eq:mean_filter}. Applying this filter, it has been achieved a more smooth output prediction and better results.
