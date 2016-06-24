@@ -41,7 +41,9 @@ Because all the video from this dataset are hosted on \textit{YouTube}, only the
 Once the videos from the dataset were downloaded, the number of frames of each video was also computed to be able to convert from seconds to frames in the temporal domain. 
 % AMAIA: I don't understand what you mean in the above text. I guess you want to say that all frames from all videos are used ( no subsampling)? The resolution part I don't get. In any case, this does not belong in this section. You should explain this when you talk about feature extraction.
 % ALBERTO: ok done
-In addition, other stats were computed, such as the whole number of frames from all the videos in the dataset, which is 65.6 million frames. Also, the length in minutes of each activity at the dataset was plot on Figure~\ref{fig:dataset_stats}, to have an estimation about the activities duration. As it can be observed, not all the activities have the same duration along the dataset, varying from 40 minutes as the total activity duration \textcolor{red}{XAVI: what do you mean by the total activity appearance ? Is it the average length ? ALBERTO: No. Is the total length of the annotations of each activity} to 3.5 hours for the longest activity. In total, over all the dataset there are 313 hours of activities which needed to be detected and classified in the 660 hours of video.
+In addition, other stats were computed, such as the whole number of frames from all the videos in the dataset, which is 65.6 million frames. Also, the length in minutes of each activity at the dataset was plot on Figure~\ref{fig:dataset_stats}, to have an estimation about the activities duration. As it can be observed, not all the activities have the same duration along the dataset, varying from 40 minutes as the total activity duration 
+%\textcolor{red}{XAVI: what do you mean by the total activity appearance ? Is it the average length ? ALBERTO: No. Is the total length of the annotations of each activity} 
+to 3.5 hours for the longest activity. In total, over all the dataset there are 313 hours of activities which needed to be detected and classified in the 660 hours of video.
 
 \begin{figure}[ht]
 \begin{center}
@@ -226,7 +228,7 @@ Figure~\ref{fig:training_curves_comparison} shows the learning curves of the sam
 \end{figure}
 
 It was observed that the network presented some over-fitting due mostly to the high learning capacity the network has over the data. %\textcolor{red}{XAVI: You should describe what is over-fitting and high learning capacity.} 
-This over-fitting problem can be addressed by adding dropout\cite{srivastava2014dropout} layers before and after the LSTM layers. Dropout consists in randomly setting a fraction $p$ of input units to 0 at each update during training time. The value of $p$ chosen was 0.5.
+This over-fitting problem can be addressed by adding dropout\cite{srivastava2014dropout} layers before and after the LSTM layers. Dropout consists in randomly setting a fraction $p$ of input units to 0 at each update during training time. %The value of $p$ chosen was 0.5.
 
 The combination of visual and audio features required a normalization step, as they presented different statistics and range of values. 
 %Another inconvenience found during training, was related to the fact of having as an input multiple vectors from multiple sources. 
@@ -246,7 +248,7 @@ The weighted loss function taking into account the unbalanced classes is defined
     \end{cases}
 \end{equation}
 
-where $\rho$ is the factor used to weight the loss for background instances at training. This value $\rho$ is usually computed as 1 minus the frequency of appearance of the class (for all the activities class can be simplified to 1). For the background class was found the its frequency of appearance was 0.4 so it was tested to setup $\rho = 0.6$. The results did present a little improvement so it was decided to even do smaller this value, setting it finally $\rho = 0.3$.
+where $\rho$ is the factor used to weight the loss for background instances at training. This value $\rho$ is usually computed as 1 minus the frequency of appearance of the class (for all the activities class can be simplified to 1). %For the background class was found the its frequency of appearance was 0.4 so it was tested to setup $\rho = 0.6$. The results did present a little improvement so it was decided to even do smaller this value, setting it finally $\rho = 0.3$.
 
 \section{Post-Processing}
 \label{section:post_processing}

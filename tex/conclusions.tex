@@ -1,25 +1,39 @@
 \chapter{Conclusions and Future Work}
 
-\textcolor{red}{XAVI: Do not forget.}
+The main objective of this project was to propose a framework which could be able to face the classification and temporally localization of activities on videos and submit the results to the ActivityNet Challenge 2016. The results obtained by the Neural Network proposed on this thesis to fulfill the goal are very good taking into account that was achieved from scratch. It can be consider that the main goal of this thesis has been accomplished.
 
-To talk about on the conclusion:
-\begin{itemize}
-	\item Bad audio at the video and that's why the audio does not improve
-    \item The C3D network was pre-trained for the Sports1M dataset so that's why the best score were to the sports categories.
-    \item Why the simplest architecture gives better results (only be a little) than the feedback architecture
-    \item Same results that other participant on the Challenge but using a more simplest network.
-    \item good results taking into account that it has been all done from scratch.
-\end{itemize}
+Reaching this point though has not been a straight line but full of turns and dead ends. At first was required to change the framework to use and port a whole model. This additional step gave the opportunity to share the process to the deep learning community which was warmly received. In addition to this, using information extracted from the audio tracks did not improve the performance as it could be expected. To understand the reason, a qualitative exploration over the Dataset was done, concluding that in a lot of videos the audio does not match the activity happening as there is music added after the recording. 
+
+Furthermore, at the results for both classification and temporally localization of activities a little bias has been observed. This bias affect the activities that are related to sports and movement activities which achieve better performance than the rest. This can be explained with the network used to extract the features from the frames which was trained exclusively with sports videos. As this network was not fine-tuned for our data distribution, this bias appears. As future work it can be possible to study the possibility to train the whole pipeline end to end to improve and get more uniformly distributed results.
+
+It is also important to remark the good results achieved by a simple pipeline which from sequence of frames from a video predicts a sequence of activities that are happening on those frames. Moreover, the flexibility of this sequence to sequence prediction allows the proposed network to face tasks where more than a single activity is present on a video. Recently it has been possible to compare the results with the other participants of the ActivityNet Challenge 2016 and it has been observed that the proposed network on this thesis obtain similar results than more complicated approaches \cite{singhmulti}.
+
+Finally, as future work, it can be consider to use the optical flow as input as many state of the art publications propose~\cite{simonyan2014two}\cite{Ng_2015_CVPR}\cite{yao2015describing}. Another possible modification to the work done would be two separate the prediction in a hierarchy way, predicting first whether there is an action or not, and if so, predict which activity as it is proposed in~\cite{shoutemporal}.
+As a last idea for future work would be to pre-trained the Recurrent Neural Network to predict the next output from the current output. This technique is called semi-supervised and help to initialize your network when training with all your dataset and achieve improved results~\cite{harvey2015semi}.
+All this ideas could be tested with the Thumos dataset which, as ActivityNet, is made of untrimmed videos.
 
 
-As future work:
-\begin{itemize}
-    \item Use optical flow as input as used in paper \cite{simonyan2014two}\cite{Ng_2015_CVPR}\cite{yao2015describing}
-    \item Extract features of Conv layers rather than the first fc layer
-    \item Improve with this hierarchy of action/background + classification (inspired by \cite{shoutemporal})
-    \item Pre-traine networks to predict the next frame
-    \item Train on 3D volumes (tubelets) directly
-    \item Thumos challenge? If not try working with Thumos dataset\cite{THUMOS15}
-    \item keep going the research line on the Image Processing group
 
-\end{itemize}
+%\textcolor{red}{XAVI: Do not forget.}
+
+%To talk about on the conclusion:
+%\begin{itemize}
+%	\item Bad audio at the video and that's why the audio does not improve
+%    \item The C3D network was pre-trained for the Sports1M dataset so that's why the best score were to the sports categories.
+%    \item Why the simplest architecture gives better results (only be a little) than the feedback architecture
+%\item Same results that other participant on the Challenge but using a more simplest network.
+%    \item good results taking into account that it has been all done from scratch.
+%\end{itemize}
+
+
+%As future work:
+%\begin{itemize}
+%%    \item Use optical flow as input as used in paper \cite{simonyan2014two}\cite{Ng_2015_CVPR}\cite{yao2015describing}
+%   \item Extract features of Conv layers rather than the first fc layer
+%\item Improve with this hierarchy of action/background + classification (inspired by \cite{shoutemporal})
+%    \item Pre-traine networks to predict the next frame
+%    \item Train on 3D volumes (tubelets) directly
+%    \item Thumos challenge? If not try working with Thumos dataset\cite{THUMOS15}
+%    \item keep going the research line on the Image Processing group
+
+%\end{itemize}
