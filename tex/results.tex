@@ -81,7 +81,8 @@ Architecture & mAP & Hit@3 \\
 \end{table}
 
 Once the single layer architecture was selected, the network was trained comparing the input features used and also comparing the basic architecture with the one with feedback.  Table~\ref{table:classification_by_features} shows how the basic architecture  with only video features obtain the best results.
-The fail of the feedback architecture may be due to instabilities caused by training with the ground truth instances from the previous output\cite{}. % ALBERTO: Bibliography?
+The fail of the feedback architecture may be to the discrepancies of the data use at training and testing. At training, as an input of the previous output it has been use the ground truth, while at testing it has been used the predicted output. The difference between the nature of the data can yield to errors and lower performance~\cite{bengio2015scheduled}. %To solve that it would require to 
+%due to instabilities caused by training with the ground truth instances from the previous output\cite{}. % ALBERTO: Bibliography?
 
 Regarding the audio, doing some manual exploration over the videos and its audio tracks, it was been observed that in some cases, the audio was completely unrelated, mostly with music that had no relationship with the activity depicted by the video.
 

@@ -63,8 +63,6 @@ In addition to previous exposed LSTMs, there is a little variation of it which i
 
 The work presented in \cite{shoutemporal} is based on Convolutional Neural Networks, more concretely on the C3D network previously explained. It propose to divide each video in multiple length sequences to then for each one predict whether an activity is in there or not, and if so, the activity class on the segment. As the first stage, they propose to subsample the segments obtained from the video to put it as input for the C3D. The next stage consist on three parallel networks which are trained separately. All the three networks are trained doing a fine tunning from the original C3D network\cite{tran2014learning}. 
 
-The first network classifies the segment to extract if there is any activity or not. The next two networks are trained to predict the activity the segment with the difference of how the loss is computed. This work propose a new way to compute the loss taking into account the intersection over union the segment has with the ground truth annotation to maximize the correct segments predictions. After this three networks, some additional post-processing is done to achieve a temporal localization of the activities. The Figure~\ref{fig:multistage} presents the schema of the pipeline proposed.
-
 \begin{figure}[ht]
 \begin{center}
 \includegraphics[width=0.8\linewidth]{img/stateofart/multistage}
@@ -72,6 +70,9 @@ The first network classifies the segment to extract if there is any activity or 
 \caption{Multi-stage architecture to temporal action location using CNNs}
 \label{fig:multistage}
 \end{figure}
+
+The first network classifies the segment to extract if there is any activity or not. The next two networks are trained to predict the activity the segment with the difference of how the loss is computed. This work propose a new way to compute the loss taking into account the intersection over union the segment has with the ground truth annotation to maximize the correct segments predictions. After this three networks, some additional post-processing is done to achieve a temporal localization of the activities. The Figure~\ref{fig:multistage} presents the schema of the pipeline proposed.
+
 
 % AMAIA: Yes, definitely ! I think that what you will explain in later sections is primarily focused on detection, so it is relevant that you explain what people have done in the past, and how your approach differs from them. I think what is interesting in your work is that you don't train in several stages using segment candidates. You train a single network. Ok, it does not improve the results, but the approach is much nicer ideally. 
 
