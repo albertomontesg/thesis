@@ -337,13 +337,15 @@ Test & 0.22369 \\
 
 The behavior of the presented model is further analyzed with some qualitative results shown in Figure~\ref{fig:results_visualization_classification}. It presents some examples for classification task, showing the top 3 activities predicted for the each video. Analogously, Figure~\ref{fig:results_visualization_detection} includes a plot the activity detection in time.
 
-Even though the challenge required to temporally localize one single activity per video, the proposed network is capable of predicting multiple classes of activities in a video, just by considering the most probable activity after the smoothing filter.
+Taking a look into the results presented, it can be observed how the classification prediction despite not always being the correct one, it predicts a very similar and related activity which share environment or have very similar action. In addition to this, when the activity require to be temporally localize, sometimes the prediction are not correct due to unsuccessful classification. Furthermore the prediction sometimes presents a lot of variation predicting multiple activity segments for a single ground truth annotation while, on the other hand, the prediction is more conservative when the annotation has multiple temporal segments and the prediction of the proposed network encapsulate them all in a single segment predicted.
+
+Finally, even though the challenge required to temporally localize one single activity per video, the proposed network is capable of predicting multiple classes of activities in a video, just by considering the most probable activity after the smoothing filter.
 %With this process, the prediction is a sequence of activities that can be process into multiple temporal activities localization in a single video.
 Figure~\ref{fig:results_visualization_detection_classes} shows a case of multiclass activity detection, which proves our claim.
 Notice that this multiclass scenario was not considered for the ActivityNet challenge, so no videos nor annotations are available for its evaluation.
 %how a multiclass detection would be the prediction. In some cases can be seen how more than one activity class is predicted and would require more exploration over the dataset to check if the predictions may have any sense.
 
-\textcolor{red}{XAVI: All examples you show are perfect. It would be nice to find some "error" that maybe you could explain why the model is confused. Otherwise the examples are a bit boring :)}
+%\textcolor{red}{XAVI: All examples you show are perfect. It would be nice to find some "error" that maybe you could explain why the model is confused. Otherwise the examples are a bit boring :)}
 
 \begin{figure}[H]
 \centering
@@ -362,13 +364,13 @@ Notice that this multiclass scenario was not considered for the ActivityNet chal
 \end{subfigure}
 
 \begin{subfigure}[b]{.4\textwidth}
-  \texttt{Video ID: c-zbA4zixfE \\
-  Activity: Throwing darts \\
-  \\
-  Prediction: \\
-  0.7325	Throwing darts \\
-  0.1364	Baking cookies \\
-  0.0254	Playing blackjack \\}
+  \texttt{Video ID: AimG8xzchfI \\
+	Activity: Curling \\
+    \\
+    Prediction: \\
+    0.3843	Shoveling snow \\
+    0.1181	Ice fishing \\
+    0.0633	Waterskiing \\}
 \end{subfigure}%
 \begin{subfigure}[b]{.6\textwidth}
   \centering
@@ -376,13 +378,13 @@ Notice that this multiclass scenario was not considered for the ActivityNet chal
 \end{subfigure}
 
 \begin{subfigure}[b]{.4\textwidth}
-  \texttt{Video ID: 7rpq2RXAoKE \\
-  Activity: Using the monkey bar \\
+  \texttt{Video ID: q8-iXvYyCGg \\
+  Activity: Hopscotch \\
   \\
   Prediction: \\
-  0.9381	Using the monkey bar \\
-  0.0563	Swinging at the playground \\
-  0.0011	Fun sliding down \\}
+  0.8477	Running a marathon \\
+  0.0231	Triple jump \\
+  0.0218	Javelin throw \\}
 \end{subfigure}%
 \begin{subfigure}[b]{.6\textwidth}
   \centering

@@ -62,6 +62,8 @@
 \usepackage{fancyhdr}
 \usepackage{etoolbox}
 \usepackage{caption}
+\usepackage{setspace}
+
 \patchcmd{\chapter}{\thispagestyle{plain}}{\thispagestyle{fancy}}{}{}
 \captionsetup{justification=centering}
 
@@ -132,18 +134,17 @@
 
 	\begin{center}
 		% University logo
-		\begin{figure}[htb]
+		\begin{figure}[ht]
 		\centering
 			\includegraphics[width=1\textwidth]{img/logo/logo_upc} 
 		\end{figure}
 		\vspace{1cm}
+
+		\textbf{\Huge Temporal Activity Detection in
+        Untrimmed Videos with Recurrent
+        Neural Networks}\\
 		
 
-		\textbf{ \Huge Temporal Activity Detection in \\ Untrimmed Videos with Recurrent \\ Neural Networks}\\
-%		\rule{\textwidth}{0.5pt}
-%		\vspace{-2ex}
-%		\centering
-		%\vspace{1cm}
 		\vspace*{0.3in}
 		%\rule{120mm}{0.05mm}\\
 		%\rule{\textwidth}{0.03mm}\\
