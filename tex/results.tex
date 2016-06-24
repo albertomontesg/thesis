@@ -33,16 +33,16 @@ As an alterative metric, the $Hit@3$ was also considered. In this case the top 3
 For the other task of the Challenge, the temporal localization or detection as the Challenge name it, the metric use to verify the results given is the Mean Average Prediction previously described. But for this task there is a little difference and consist on taking a prediction as correct before computing the mAP when the Intersection over Union (IoU) is higher than a threshold $\alpha$. For the ActivityNet Challenge $\alpha$ value used is $0.5$.
 %the Intersection Over Union (IoU). This metric computes a prediction as correct if the IoU of the prediction with the ground truth annotations is higher than a value $\alpha$. Then the mAP is computed. For the ActivityNet Challenge the $\alpha$ value used is 0.5.
 
-%more than one prediction can be made, and for each prediction giving a the probability of success computed. 
+%more than one prediction can be made, and for each prediction giving a the probability of success computed.
 
 %\textcolor{red}{XAVI: I do not really understand how mAP and Top-1 and Top-3 are computed in ActivityNet. I have an intuition but you should double check this and review these definitions and expressions. Maybe you find the definitions in the original ActivityNet paper. It has been an error explaining hit3 on detection task as it is not computed. I have change a bit the text of how the mAP is computed to understand it better.}
- 
+
 
 \section{Training}
 
 The training of the Recurrent Neural Networks was all done using a 256 batch size and 20 \textit{timesteps} to get a good gradient propagation through the \textit{timesteps} and to fit the most possible data into the GPUs when training.
 
-The optimizer function use was the RMSprop\cite{dauphin2015rmsprop} which is known to work very well for training Recurrent Neural Networks. The RMSprop was set with a value of $\rho$ of 0.9 and $\epsilon$ of $10^{-8}$. The value of the learning rate, as it is explained on Section~\ref{section:training}, was set to $10^{-5}$ for all the experimentation done. 
+The optimizer function use was the RMSprop\cite{dauphin2015rmsprop} which is known to work very well for training Recurrent Neural Networks. The RMSprop was set with a value of $\rho$ of 0.9 and $\epsilon$ of $10^{-8}$. The value of the learning rate, as it is explained on Section~\ref{section:training}, was set to $10^{-5}$ for all the experimentation done.
 
 At the weighted loss computation, for the background class was found that its frequency of appearance was 0.4. Different values of $\rho$ were finally tested trying to obtain the best results and finally the $\rho$ was set to $0.3$.
 
@@ -55,9 +55,9 @@ Finally the dropout was set to have a probability of $0.5$ as it is the most fre
 
 \section{Classification Task}
 
-The first experiments were related to the depth of the network. 
-%The way to measure the performance, was computing the mAP for the classification task. The different experiments  
-It was tested from a 3 layers LSTM with 1024 cells each layer, to a one single layer with 512 cells, going through a two layers network with 512 LSTM cells each one. 
+The first experiments were related to the depth of the network.
+%The way to measure the performance, was computing the mAP for the classification task. The different experiments
+It was tested from a 3 layers LSTM with 1024 cells each layer, to a one single layer with 512 cells, going through a two layers network with 512 LSTM cells each one.
 %All the architectures presented a batch normalization after the input entrance and dropout before and after the LSTM layers. XAVI: You already explained this
 Also all the experiments were done exclusively with the features extracted from the C3D network.
 Table~\ref{table:classification_by_architecture} shows how the simplest RNN achieved the best performance. This results was because all the networks presented high learning capacity over our data and it was observed a little over-fitting with the deeper architectures.
@@ -83,7 +83,7 @@ Architecture & mAP & Hit@3 \\
 Once the single layer architecture was selected, the network was trained comparing the input features used and also comparing the basic architecture with the one with feedback.  Table~\ref{table:classification_by_features} shows how the basic architecture  with only video features obtain the best results.
 The fail of the feedback architecture may be due to instabilities caused by training with the ground truth instances from the previous output\cite{}. % ALBERTO: Bibliography?
 
-Regarding the audio, doing some manual exploration over the videos and its audio tracks, it was been observed that in some cases, the audio was completely unrelated, mostly with music that had no relationship with the activity depicted by the video. 
+Regarding the audio, doing some manual exploration over the videos and its audio tracks, it was been observed that in some cases, the audio was completely unrelated, mostly with music that had no relationship with the activity depicted by the video.
 
 \begin{table}[H]
 \begin{center}
@@ -103,11 +103,11 @@ Video w/ audio \& feedback & 0.5652 & 0.7319 \\
 \label{table:classification_by_features}
 \end{table}
 
-The ActivityNet Dataset is organized in 200 activities, and these activities are also contained in a taxonomy, in particular, at the leaves of a hierarchical structure. 
-%. The 200 activities which are annotated all the videos of the dataset and the proposed network predict are the leaf nodes of the taxonomy tree. 
+The ActivityNet Dataset is organized in 200 activities, and these activities are also contained in a taxonomy, in particular, at the leaves of a hierarchical structure.
+%. The 200 activities which are annotated all the videos of the dataset and the proposed network predict are the leaf nodes of the taxonomy tree.
 On this structure there are 5 top level categories that describe higher level of abstraction: \textit{Eating and drinking activities}, \textit{Sports, Exercise and Recreation}, \textit{Household Activities}, \textit{Socializing, Relaxing and Leisure}, \textit{Personal Care}.
-The mean average precision was also computed for these 5 top level activities. 
-%To do so, all the predicted and ground truth activity labels have been changed by its top level activity and then for each of them computed the Average Precision. 
+The mean average precision was also computed for these 5 top level activities.
+%To do so, all the predicted and ground truth activity labels have been changed by its top level activity and then for each of them computed the Average Precision.
 As can be seen on Table~\ref{table:top_level_classification_ap} and Figure~\ref{table:top_level_classification_ap} the \textit{Sports, Exercise and Recreation} have an average precision of $94\%$. This can be explained with the fact that all the features extracted from the videos come from a network which weights were trained to work with a dataset of videos, the Sports1M\cite{KarpathyCVPR14}.
 
 \begin{table}[H]
@@ -178,7 +178,7 @@ As an extra visualization of the results for the classification task, at the Fig
 \section{Detection Task}
 
 The main goal of this project is to temporally localize activities on videos. The results obtained are presented in Table \ref{table:detection_architecture_comparison}, considering two architectures: the basic architecture with video features, and the feedback architecture with video and audio features concatenated (this concatenation helped for the classification task, as shown in Table~\ref{table:classification_by_features}).
-The basic architecture obtains a slightly better results. 
+The basic architecture obtains a slightly better results.
 
 %%%%%%%%
 %How I justify the feedback architecture does not give best results than the basic one?
@@ -200,7 +200,7 @@ Feedback Architecture & 0.20676 \\
 \label{table:detection_architecture_comparison}
 \end{table}
 
-The detection task included as post-processing stage described in Section~\ref{section:post_processing}, which aimed at a smoother and better temporal prediction of the activities. 
+The detection task included as post-processing stage described in Section~\ref{section:post_processing}, which aimed at a smoother and better temporal prediction of the activities.
 The parameters of this post-processing where also jointly estimated, as shown in Table~\ref{table:detection_postprocessing_comparison}.
 These were $\gamma$ as the activity probability threshold, and $k$ as the window size for the mean filter.
 
@@ -276,7 +276,7 @@ Personal Care & 0.11234 \\
 \label{fig:top_level_detection_ap}
 \end{figure}
 
-As it has been done for the classification task, in the Figure~\ref{fig:ap_by_activity_classification} the Average Precision has been plotted for every activity of the dataset. The same effect in the classification task is observe for detection task, where the average precision not performs equally along the activities on the dataset and the more active activities tent to have better results than the more relaxed ones. 
+As it has been done for the classification task, in the Figure~\ref{fig:ap_by_activity_classification} the Average Precision has been plotted for every activity of the dataset. The same effect in the classification task is observe for detection task, where the average precision not performs equally along the activities on the dataset and the more active activities tent to have better results than the more relaxed ones.
 
 \begin{figure}[ht]
 \begin{center}
@@ -312,7 +312,7 @@ On the other hand, the performance of the proposed network, used only as a regio
 %I will put a figure plotting the mAP against the IoU asked between 0.1 and 0.5
 %\textcolor{red}{XAVI: Do not forget.}
 %%%%%%%%
-%Plot with multiple IOU and mAP... And maybe a plot of recall vs IoU threshold to see if the network can create good temporal candidates. 
+%Plot with multiple IOU and mAP... And maybe a plot of recall vs IoU threshold to see if the network can create good temporal candidates.
 
 
 Finally, at the time of submission to the ActivityNet Challenge 2016, the same architecture than in the classification task was chosen. The results in both validation and test subset are shown in Table~\ref{table:detection_results_challenge}.
@@ -336,8 +336,8 @@ Test & 0.22369 \\
 
 The behavior of the presented model is further analyzed with some qualitative results shown in Figure~\ref{fig:results_visualization_classification}. It presents some examples for classification task, showing the top 3 activities predicted for the each video. Analogously, Figure~\ref{fig:results_visualization_detection} includes a plot the activity detection in time.
 
-Even though the challenge required to temporally localize one single activity per video, the proposed network is capable of predicting multiple classes of activities in a video, just by considering the most probable activity after the smoothing filter. 
-%With this process, the prediction is a sequence of activities that can be process into multiple temporal activities localization in a single video. 
+Even though the challenge required to temporally localize one single activity per video, the proposed network is capable of predicting multiple classes of activities in a video, just by considering the most probable activity after the smoothing filter.
+%With this process, the prediction is a sequence of activities that can be process into multiple temporal activities localization in a single video.
 Figure~\ref{fig:results_visualization_detection_classes} shows a case of multiclass activity detection, which proves our claim.
 Notice that this multiclass scenario was not considered for the ActivityNet challenge, so no videos nor annotations are available for its evaluation.
 %how a multiclass detection would be the prediction. In some cases can be seen how more than one activity class is predicted and would require more exploration over the dataset to check if the predictions may have any sense.
@@ -410,40 +410,30 @@ Notice that this multiclass scenario was not considered for the ActivityNet chal
 %%% I'll put two more examples to fill the page on all this 3 figures.
 \begin{figure}[H]
 \begin{center}
-\texttt{Video ID: p1gH8y8X0kA}
-\includegraphics[width=1\linewidth]{img/results/results_visualization_detection_a_1}
-\includegraphics[width=1\linewidth]{img/results/results_visualization_detection_a_2}
-\texttt{Video ID: AFb77tjPuwQ}
-\includegraphics[width=1\linewidth]{img/results/results_visualization_detection_b_1}
-\includegraphics[width=1\linewidth]{img/results/results_visualization_detection_b_2}
-\texttt{Video ID: w--X02F3MHM}
-\includegraphics[width=1\linewidth]{img/results/results_visualization_detection_c_1}
-\includegraphics[width=1\linewidth]{img/results/results_visualization_detection_c_2}
-\texttt{Video ID: cXY-ONmtylc}
-\includegraphics[width=1\linewidth]{img/results/results_visualization_detection_d_1}
-\includegraphics[width=1\linewidth]{img/results/results_visualization_detection_d_2}
+\includegraphics[width=1\linewidth]{img/results/activity_detection/activity_temporal_localization_0}
+\includegraphics[width=1\linewidth]{img/results/activity_detection/activity_temporal_localization_1}
+\includegraphics[width=1\linewidth]{img/results/activity_detection/activity_temporal_localization_2}
+\includegraphics[width=1\linewidth]{img/results/activity_detection/activity_temporal_localization_3}
+\includegraphics[width=1\linewidth]{img/results/activity_detection/activity_temporal_localization_4}
+\includegraphics[width=1\linewidth]{img/results/activity_detection/activity_temporal_localization_5}
+\includegraphics[width=1\linewidth]{img/results/activity_detection/activity_temporal_localization_6}
+\includegraphics[width=1\linewidth]{img/results/activity_detection/activity_temporal_localization_7}
 \end{center}
-\caption{Activity prediction done by the proposed neural network.}
+\caption{Temporal activity localization prediction done by the proposed neural network.}
 \label{fig:results_visualization_detection}
 \end{figure}
 
 \begin{figure}[H]
 \begin{center}
-\texttt{Video ID: En9FemmDusk}
-\includegraphics[width=1\linewidth]{img/results/results_visualization_detection_classes_a_1}
-\includegraphics[width=1\linewidth]{img/results/results_visualization_detection_classes_a_2}
-\texttt{Video ID: 6Ke30NtYOC0}
-\includegraphics[width=1\linewidth]{img/results/results_visualization_detection_classes_b_1}
-\includegraphics[width=1\linewidth]{img/results/results_visualization_detection_classes_b_2}
-\texttt{Video ID: 32H1n87WgCM}
-\includegraphics[width=1\linewidth]{img/results/results_visualization_detection_classes_c_1}
-\includegraphics[width=1\linewidth]{img/results/results_visualization_detection_classes_c_2}
-\texttt{Video ID: feWO\_gqAcGk}
-\includegraphics[width=1\linewidth]{img/results/results_visualization_detection_classes_c_1}
-\includegraphics[width=1\linewidth]{img/results/results_visualization_detection_classes_c_2}
+\includegraphics[width=1\linewidth]{img/results/activity_detection_multiple/activity_detection_sample_0}
+\includegraphics[width=1\linewidth]{img/results/activity_detection_multiple/activity_detection_sample_1}
+\includegraphics[width=1\linewidth]{img/results/activity_detection_multiple/activity_detection_sample_2}
+\includegraphics[width=1\linewidth]{img/results/activity_detection_multiple/activity_detection_sample_3}
+\includegraphics[width=1\linewidth]{img/results/activity_detection_multiple/activity_detection_sample_4}
+\includegraphics[width=1\linewidth]{img/results/activity_detection_multiple/activity_detection_sample_5}
+\includegraphics[width=1\linewidth]{img/results/activity_detection_multiple/activity_detection_sample_6}
+\includegraphics[width=1\linewidth]{img/results/activity_detection_multiple/activity_detection_sample_7}
 \end{center}
 \caption{Activity predicted from video doing non maximum suppression at each video clip. Different colors represents different activity classes.}
 \label{fig:results_visualization_detection_classes}
 \end{figure}
-
-
