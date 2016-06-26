@@ -56,7 +56,7 @@ In addition to the software, specific hardware was required. The high demanding 
 
 This project tries to offer a simple and flexible solution to face the tasks classification and temporal localization on videos. The solution proposed is made by a first step stage where the video features are extracted. To do so, a pre-trained 3D convolutional network has been used to extract features from spatial and temporal dimension from video frames. In parallel, features from audio were extracted to combine them with the ones extracted from the video frames.
 
-As a second stage, after having encode all the possible information from video using available implementations, a Recurrent Neural Network was proposed to use to exploit long term relations and predict the sequence of activities available at each video. This network was tested with different architectures and inputs from the previous features extracted. Figure~\ref{fig:global_pipeline} shows an schematic of the proposed pipeline.
+As a second stage, a Recurrent Neural Network is proposed to exploit long term relations and predict the sequence of activities available at each video. This network was tested with different architectures and inputs from the previously extracted features. Figure~\ref{fig:global_pipeline} shows an schematic of the proposed pipeline.
 
 \begin{figure}[ht]
 \begin{center}
@@ -66,9 +66,9 @@ As a second stage, after having encode all the possible information from video u
 \label{fig:global_pipeline}
 \end{figure}
 
-All the tests were done using a recently publish video dataset, the ActivityNet which offers untrimmed videos from 200 activities. All the videos from the dataset present a single activity on it so its possible to classify them globally, furthermore the activities along the video are temporally localized and so the task to do it was the main goal of this project. Most of the effort and architecture was done taking into account resolving the detection task knowing that if you solve the temporal detection, is possible to extrapolate to globally classify videos. 
+All the tests were done using a recently publish video dataset, the ActivityNet\cite{caba2015activitynet} which offers untrimmed videos from 200 activities. All the videos from the dataset present a single activity on it so its possible to classify them globally. Furthermore the activities along the video are temporally localized. Most of the effort and architecture was performed taking into account resolving the detection task can be easily extrapolated to solve the global classification task for the whole video.
 
-Moreover, multiple post-processing techniques were proposed to use at the proposed network output to improve the classification and detection tasks. Multiple configurations were tested in order to maximize the results.
+Moreover, multiple post-processing techniques were proposed to improve the classification and detection tasks. Multiple configurations were tested in order to maximize the results.
 
 Finally, the best results were submitted to the ActivityNet Challenge 2016 at the CVPR.
 
@@ -90,7 +90,7 @@ This project was planned to follow the packages detailed on this section, with t
 
 \subsection{Gantt Diagram}
 
-The Gantt diagram of this project's work plan can be found on the Figure~\ref{fig:gantt_diagram}.
+The Gantt diagram of this project can be found on the Figure~\ref{fig:gantt_diagram}.
 
 \begin{figure}[H]
 \begin{center}
@@ -108,6 +108,6 @@ The Gantt diagram of this project's work plan can be found on the Figure~\ref{fi
 
 The initial plan was to adapt the C3D\cite{tran2014learning} model for the ActivityNet task, which is implemented with the  \textit{Caffe} deep learning framework. But in order to use Recurrent Neural Networks, \textit{Keras} was a much better and flexible framework, so it was necessary to export the original C3D model from the Caffe framework to Keras.
 
-Another deviation for the plan was that, due to the huge amount of required computational resources, fine tuning the full C3D network was not been possible. Instead, the C3D framework was used to extract features from the videos, which were later used as inputs to train the recurrent neural network.
+Another deviation for the plan was that, due to the huge amount of required computational resources, fine tuning the full C3D network was not possible. Instead, the C3D framework was used to extract features from the videos, which were later used as inputs to train the recurrent neural network.
 
 Finally, the original work plan was extended by exploring the potential of audio descriptors for activity recognition. For this task, this work was supported by Professor Ignasi Esquerra from the TALP research group at UPC. He took care of extracting the audio features, which were later assessed and fused with the visual ones.
