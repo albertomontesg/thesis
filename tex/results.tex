@@ -162,8 +162,8 @@ Validation & 0.5938 & 0.7576 \\
 Test & 0.5874 & 0.7554 \\
 \hline\hline
 Baseline~\cite{caba2015activitynet} & 0.422 & - \\
-Challenge Winer & \\
-Mean Performance from Challenge Participants & & \\
+Challenge Winer~\cite{WangQT15action,2015arXiv150702159W} & 0.9323 & 0.9642 \\
+Mean Performance from Challenge Participants & 0.6626 & 0.7706 \\
 \hline
 \end{tabular}
 \end{center}
@@ -179,11 +179,6 @@ As an extra visualization of the results for the classification task, at the Fig
 
 The main goal of this project is to temporally localize activities on videos. The results obtained are presented in Table \ref{table:detection_architecture_comparison}, considering two architectures: the basic architecture with video features, and the feedback architecture with video and audio features concatenated (this concatenation helped for the classification task, as shown in Table~\ref{table:classification_by_features}).
 The basic architecture obtains a slightly better results.
-
-%%%%%%%%
-%How I justify the feedback architecture does not give best results than the basic one?
-%\textcolor{red}{XAVI: I think you already did earlier, right ? No need to repeat here, or just refer to the same argument exposed before.}
-%%%%%%%%
 
 \begin{table}[H]
 \begin{center}
@@ -309,13 +304,6 @@ This regions proposals can be computed after the the post-processing where the a
 \label{fig:recall_vs_iou}
 \end{figure}
 
-%%%%%%%%
-%I will put a figure plotting the mAP against the IoU asked between 0.1 and 0.5
-%\textcolor{red}{XAVI: Do not forget.}
-%%%%%%%%
-%Plot with multiple IOU and mAP... And maybe a plot of recall vs IoU threshold to see if the network can create good temporal candidates.
-
-
 Finally, at the time of submission to the ActivityNet Challenge 2016, the same architecture than in the classification task was chosen. The results in both validation and test subset are shown in Table~\ref{table:detection_results_challenge}.
 
 \begin{table}[H]
@@ -327,13 +315,13 @@ Subset & mAP \\
 Validation & 0.2251 \\
 Test & 0.2236 \\
 \hline\hline
-Baseline~\cite{caba2015activitynet} & 0.0970\\
-Challenge Winer & \\
-Mean Performance from Challenge Participants & \\
+Baseline~\cite{caba2015activitynet} & 0.0970 \\
+Challenge Winer & 0.42478 \\
+Mean Performance from Challenge Participants & 0.2994 \\
 \hline
 \end{tabular}
 \end{center}
-\caption{Results of the UPC team at the ActivityNet Challenge 2016 for the detection task.}
+\caption{Results of the UPC team at the ActivityNet Challenge 2016 for the detection task. The third-party results are all referred to the test subset.}
 \label{table:detection_results_challenge}
 \end{table}
 
@@ -344,12 +332,8 @@ The behavior of the presented model is further analyzed with some qualitative re
 Taking a look into the results presented, it can be observed how the classification prediction despite not always being the correct one, it predicts a very similar and related activity which share environment or have very similar action. In addition to this, when the activity require to be temporally localize, sometimes the prediction are not correct due to unsuccessful classification. Furthermore the prediction sometimes predicts multiple activity segments for a single ground truth annotation while, on the other hand, the prediction is more conservative when the annotation has multiple temporal segments and the prediction of the proposed network encapsulates them all in a single segment predicted.
 
 Finally, even though the challenge required to temporally localize one single activity per video, the proposed network is capable of predicting multiple classes of activities in a video, just by considering the most probable activity after the smoothing filter.
-%With this process, the prediction is a sequence of activities that can be process into multiple temporal activities localization in a single video.
 Figure~\ref{fig:results_visualization_detection_classes} shows a case of multiclass activity detection, which proves our claim.
 Notice that this multiclass scenario was not considered for the ActivityNet challenge, so no videos nor annotations are available for its evaluation.
-%how a multiclass detection would be the prediction. In some cases can be seen how more than one activity class is predicted and would require more exploration over the dataset to check if the predictions may have any sense.
-
-%\textcolor{red}{XAVI: All examples you show are perfect. It would be nice to find some "error" that maybe you could explain why the model is confused. Otherwise the examples are a bit boring :)}
 
 \begin{figure}[H]
 \centering
