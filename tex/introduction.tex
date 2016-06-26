@@ -6,9 +6,9 @@ Recognizing activities in videos has become a hot topic over the last years in t
 
 Deep learning techniques have recently become the new state of the art in many computer vision tasks, such as image and object recognition in still images. While successful methodologies have been presented for image understanding, video content still presents additional challenges (e.g. motion, temporal consistency, ...)  that often cannot be bridged with still image recognition solutions.
 
-The purpose of this work is to address the challenges of video content analysis taking advantage of state-of-the-art deep learning techniques. The aim of this project is to develop a competitive framework to both classify and temporally localize activities on videos. To achieve this goal, the dataset used to fulfill this task is be the ActivityNet dataset \cite{caba2015activitynet}, which offers untrimmed videos depicting a diversity of human activities.
+The purpose of this work is to address the challenges of video content analysis taking advantage of state-of-the-art deep learning techniques. The aim of this project is to develop a competitive framework to both classify and temporally localize activities on videos. To achieve this goal, the dataset used to fulfill this task is be the ActivityNet dataset~\cite{caba2015activitynet}, which offers untrimmed videos depicting a diversity of human activities.
 
-%Rather than focusing on activity classification on videos, the aim of this project is to offer a good framework to detect and localize activities on videos. To achieve this goal, the dataset used to fulfill this task will be the ActivityNet dataset \cite{caba2015activitynet}, which offers untrimmed videos which a huge variety of activities on it.
+%Rather than focusing on activity classification on videos, the aim of this project is to offer a good framework to detect and localize activities on videos. To achieve this goal, the dataset used to fulfill this task will be the ActivityNet dataset~\cite{caba2015activitynet}, which offers untrimmed videos which a huge variety of activities on it.
 
 % AMAIA: I think that it is fine to say that you will both address activity classification and detection in your thesis, not just detection... DONE
 
@@ -43,14 +43,10 @@ This project has been developed with the implicit goal of setting a baseline for
 
 % AMAIA: I guess that by requirements you mean "what you were asked to do/what we agreed to do" at the beginning of the project? I slightly modified it, uut feel free to add more items.
 
-As this project has been developed from scratch, no prior specifications were defined. The specifications were decided taking into account the needs for the project and the available resources. All the development was done on \textit{Python} using a very well-known framework which is \textit{Keras}, also a pioneering use of this library in GPI. This Deep Learning wrapper facilitates the design and training of models over two computational frameworks: \textit{Theano}\cite{theano2016theano} and \textit{TensorFlow}\cite{abadi2016tensorflow}. Both  projects support complex and high demanding computations over both CPU and GPU. For this project \textit{Theano} was used as back-end because, at the time of developing this project, it was the only one that had implemented the convolution 3D and max pooling 3D operations required for its development.
+As this project has been developed from scratch, no prior specifications were defined. The specifications were decided taking into account the needs for the project and the available resources. All the development was done on \textit{Python} using a very well-known framework which is \textit{Keras}, also a pioneering use of this library in GPI. This Deep Learning wrapper facilitates the design and training of models over two computational frameworks: \textit{Theano}~\cite{theano2016theano} and \textit{TensorFlow}~\cite{abadi2016tensorflow}. Both  projects support complex and high demanding computations over both CPU and GPU. For this project \textit{Theano} was used as back-end because, at the time of developing this project, it was the only one that had implemented the convolution 3D and max pooling 3D operations required for its development.
 
 In addition to the software, specific hardware was required. The high demanding computational resources needed to train neural networks required the use of GPUs provided by the \textit{Image Processing Group} at UPC.
 
-%DELETED: For the development of Deep Learning models and to do all the computations were used some frameworks in \textit{Python}. Because this project has been developed without a baseline, no prior specifications were required. Anyway, for the development of this project it has been decided to work with \textit{Python} for development and \textit{Keras} over \textit{Theano}\cite{theano2016theano} as the deep learning framework to use.
-
-% AMAIA: "Anyway" is too informal...
-% AMAIA: I don't know if this applies here, but what about the GPUs that you used? ALBERTO: I've just added
 
 \section{Methods and Procedures}
 
@@ -66,7 +62,7 @@ As a second stage, a Recurrent Neural Network is proposed to exploit long term r
 \label{fig:global_pipeline}
 \end{figure}
 
-All the tests were done using a recently publish video dataset, the ActivityNet\cite{caba2015activitynet} which offers untrimmed videos from 200 activities. All the videos from the dataset present a single activity on it so its possible to classify them globally. Furthermore the activities along the video are temporally localized. Most of the effort and architecture was performed taking into account resolving the detection task can be easily extrapolated to solve the global classification task for the whole video.
+All the tests were done using a recently publish video dataset, the ActivityNet~\cite{caba2015activitynet} which offers untrimmed videos from 200 activities. All the videos from the dataset present a single activity on it so its possible to classify them globally. Furthermore the activities along the video are temporally localized. Most of the effort and architecture was performed taking into account resolving the detection task can be easily extrapolated to solve the global classification task for the whole video.
 
 Moreover, multiple post-processing techniques were proposed to improve the classification and detection tasks. Multiple configurations were tested in order to maximize the results.
 
@@ -106,7 +102,7 @@ The Gantt diagram of this project can be found on the Figure~\ref{fig:gantt_diag
 \section{Work Plan Deviations and Incidents}
 \label{section:work_plan_deviations}
 
-The initial plan was to adapt the C3D\cite{tran2014learning} model for the ActivityNet task, which is implemented with the  \textit{Caffe} deep learning framework. But in order to use Recurrent Neural Networks, \textit{Keras} was a much better and flexible framework, so it was necessary to export the original C3D model from the Caffe framework to Keras.
+The initial plan was to adapt the C3D~\cite{tran2014learning} model for the ActivityNet task, which is implemented with the \textit{Caffe} deep learning framework. But in order to use Recurrent Neural Networks, \textit{Keras} was a much better and flexible framework, so it was necessary to export the original C3D model from the Caffe framework to Keras.
 
 Another deviation for the plan was that, due to the huge amount of required computational resources, fine tuning the full C3D network was not possible. Instead, the C3D framework was used to extract features from the videos, which were later used as inputs to train the recurrent neural network.
 

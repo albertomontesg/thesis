@@ -41,11 +41,11 @@ For the ActivityNet Challenge $\alpha$ value used is $0.5$.
 
 The Recurrent Neural Networks were trained with a 256 batch size and 20 \textit{timesteps} to get a good gradient propagation through the \textit{timesteps} and to fit the most possible data into the GPUs when training.
 
-The optimizer function used was the RMSprop\cite{dauphin2015rmsprop} which is known to work very well for training Recurrent Neural Networks. The RMSprop was set with a value of $\rho$ of 0.9 and $\epsilon$ of $10^{-8}$. The value of the learning rate, as it is explained on Section~\ref{section:training}, was set to $10^{-5}$ for all the experimentation done.
+The optimizer function used was the RMSprop~\cite{dauphin2015rmsprop} which is known to work very well for training Recurrent Neural Networks. The RMSprop was set with a value of $\rho$ of 0.9 and $\epsilon$ of $10^{-8}$. The value of the learning rate, as it is explained on Section~\ref{section:training}, was set to $10^{-5}$ for all the experimentation done.
 
 At the weighted loss computation, for the background class was found that its frequency of appearance was 0.4. Different values of $\rho$ were finally tested trying to obtain the best results and finally the $\rho$ was set to $0.3$.
 
-Finally the dropout was set to have a probability of $0.5$ as it is the most frequent value used at the literature\cite{srivastava2014dropout}.
+Finally the dropout was set to have a probability of $0.5$ as it is the most frequent value used at the literature~\cite{srivastava2014dropout}.
 
 %\textcolor{red}{XAVI: This section is so small that you may merge it with its counterpart in the Methodology section. It will be much easier to understand if you explain everything in the same section. ALBERTO: I think that on this section I should only give the values set for training as is done in all the publications}
 
@@ -77,8 +77,7 @@ Architecture & mAP & Hit@3 \\
 \end{table}
 
 Once the single layer architecture was selected, the network was trained comparing the input features used and also comparing the basic architecture with the one with feedback.  Table~\ref{table:classification_by_features} shows how the basic architecture  with only video features obtain the best results.
-The fail of the feedback architecture may be to the discrepancies of the data use at training and testing. At training, as an input of the previous output it has been use the ground truth, while at testing it has been used the predicted output. The difference between the nature of the data can yield to errors and lower performance~\cite{bengio2015scheduled}. %To solve that it would require to
-%due to instabilities caused by training with the ground truth instances from the previous output\cite{}. % ALBERTO: Bibliography?
+The fail of the feedback architecture may be to the discrepancies of the data use at training and testing. At training, as an input of the previous output it has been use the ground truth, while at testing it has been used the predicted output. The difference between the nature of the data can yield to errors and lower performance~\cite{bengio2015scheduled}.
 
 Regarding the audio, doing some manual exploration over the videos and its audio tracks, it was observed that in some cases, the audio was completely unrelated, mostly with music that had no relationship with the activity depicted by the video.
 
@@ -105,7 +104,7 @@ The ActivityNet Dataset is organized in 200 activities, and these activities are
 On this structure there are 5 top level categories that describe higher levels of abstraction: \textit{Eating and drinking activities}, \textit{Sports, Exercise and Recreation}, \textit{Household Activities}, \textit{Socializing, Relaxing and Leisure}, \textit{Personal Care}.
 The mean average precision was also computed for these 5 top level activities.
 %To do so, all the predicted and ground truth activity labels have been changed by its top level activity and then for each of them computed the Average Precision.
-As can be seen on Table~\ref{table:top_level_classification_ap} and Figure~\ref{table:top_level_classification_ap} the \textit{Sports, Exercise and Recreation} have an average precision of $94\%$. This can be explained with the fact that all the features extracted from the videos come from a network which weights were trained to work with a dataset of videos, the Sports1M\cite{KarpathyCVPR14}.
+As can be seen on Table~\ref{table:top_level_classification_ap} and Figure~\ref{table:top_level_classification_ap} the \textit{Sports, Exercise and Recreation} have an average precision of $94\%$. This can be explained with the fact that all the features extracted from the videos come from a network which weights were trained to work with a dataset of videos, the Sports1M~\cite{KarpathyCVPR14}.
 
 \begin{table}[H]
 \begin{center}
