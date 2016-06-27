@@ -63,6 +63,7 @@
 \usepackage{etoolbox}
 \usepackage{caption}
 \usepackage{setspace}
+\usepackage{array}
 
 \patchcmd{\chapter}{\thispagestyle{plain}}{\thispagestyle{fancy}}{}{}
 \captionsetup{justification=centering}
@@ -140,17 +141,20 @@
 		\end{figure}
 		\vspace{1cm}
 
-		\textbf{\Huge Temporal Activity Detection in
-        Untrimmed Videos with Recurrent
-        Neural Networks}\\
-		
+		{\setstretch{1.0}
+		\textbf{\Huge Temporal Activity Detection in \\
+        Untrimmed Videos with Recurrent \\
+        Neural Networks \\}
+		}
 
 		\vspace*{0.3in}
 		%\rule{120mm}{0.05mm}\\
 		%\rule{\textwidth}{0.03mm}\\
 		\vspace*{0.1in}
 		%subtitle
-		{\Large  Final Degree's Thesis \\ Telecommunications Science and Technology }\\
+		{\setstretch{1.0} 
+        \Large  Final Degree's Thesis \\ 
+        Telecommunications Science and Technology \\}
 		\vspace{5cm}
 		\begin{tabular}{ll}
 		
@@ -165,7 +169,7 @@
 		\end{tabular}
         
 		%Universities
-        \vspace*{2in}
+        \vspace*{1.85in}
 		\large{\textbf{Universitat Politècnica de Catalunya (UPC)}}\\
 		\large{\textbf{2015 - 2016}}\\
 	\end{center}

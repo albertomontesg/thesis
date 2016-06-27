@@ -38,9 +38,7 @@ For this C3D network, the input data are clips of videos where all the frames ar
 
 In addition to spatial and temporal correlations, it has been seen that some approaches extract information from the audio track to explode the information it may give. This technique of combining both video and audio is becoming trendy on the latest activity detection on video datasets~\cite{xu2015uts}. The idea of extracting information from the audio in addition to the video seems really interesting but its success on the results are very related to the coherence between the audio and video tracks.
 
-The recent work presented in~\cite{shoutemporal} is based on Convolutional Neural Networks, more concretely on the C3D network previously explained. It proposes to divide each video in multiple sequences of different lengths and predict for each one whether if they depict an activity or not. In affirmative class, another classification stage determines which of the activities is represented in the video segment. As the first stage, they propose to subsample the segments obtained from the video to put it as input for the C3D. The next stage consist on three parallel networks which are trained separately. All the three networks are trained doing a fine tunning from the original C3D network~\cite{tran2014learning}.
-
-\begin{figure}[hb]
+\begin{figure}[ht]
 \begin{center}
 \includegraphics[width=1\linewidth]{img/stateofart/multistage}
 \end{center}
@@ -48,14 +46,15 @@ The recent work presented in~\cite{shoutemporal} is based on Convolutional Neura
 \label{fig:multistage}
 \end{figure}
 
+The recent work presented in~\cite{shoutemporal} is based on Convolutional Neural Networks, more concretely on the C3D network previously explained. It proposes to divide each video in multiple sequences of different lengths and predict for each one whether if they depict an activity or not. In affirmative class, another classification stage determines which of the activities is represented in the video segment. As the first stage, they propose to subsample the segments obtained from the video to put it as input for the C3D. The next stage consist on three parallel networks which are trained separately. All the three networks are trained doing a fine tunning from the original C3D network~\cite{tran2014learning}.
 
 \section{Recurrent Neural Networks applied to Videos}
 
 A more complex and different approach to address activity classification and temporal localization on videos is using RNNs. This networks are characterized by being trained with sequences of related data and having memory cells. RNNs are mainly used to learn from temporal sequences as text generation or speech recognition, but they have also been used in tasks related to video.
 
 The most efficient implementation of Recurrent Neural Network found at the literature is the Long Short Term Memory cells~\cite{hochreiter1997long}, or also known as LSTM. This cell, represented in the Figure~\ref{fig:lstm_chain}, has as input the combination of the previous cell output and the layer's input in addition to a cell state which is propagated at every temporal step and represents the memory of the cell.
-When forwarding information, the first step is to decide what information is going to be thrown away from the cell state. This decision is made by a sigmoid layer called the \textit{forget gate layer}.
-The next step is to decide what new information is going to be stored in the cell. First a sigmoid layer called \textit{input gate layer} decides which values are going to be updated. Next, a $\tanh$ layer creates a vector of new candidate values that could be added to the state. As the next step, both will be combined to create an update to the cell state.
+When forwarding information, the first step is to decide what information is going to be thrown away from the cell state. This decision is made by a \textit{sigmoid} layer called the \textit{forget gate layer}.
+The next step is to decide what new information is going to be stored in the cell. First a \textit{sigmoid} layer called \textit{input gate layer} decides which values are going to be updated. Next, a $\tanh$ layer creates a vector of new candidate values that could be added to the state. As the next step, both will be combined to create an update to the cell state.
 Finally, the output will be computed based on the cell state, but will be a filtered version. First a sigmoid layer decides what parts of the cell state are going to the output and multiply it by the cell state after a $\tanh$ layer.
 This cells also presents propagation of information along temporal sequences and can be represented forming chain as can also seen on Figure~\ref{fig:lstm_chain}, where each element represents a single time step.
 

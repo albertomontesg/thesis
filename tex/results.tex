@@ -63,7 +63,7 @@ Table~\ref{table:classification_by_architecture} shows how the simplest RNN achi
 \begin{center}
 \begin{tabular}{|l|c|c|}
 \hline
-Architecture & mAP & Hit@3 \\
+\textbf{Architecture} & \textbf{mAP} & \textbf{Hit@3} \\
 \hline\hline
 3 x 1024-LSTM & 0.5635 & 0.7437 \\
 2 x 512-LSTM & 0.5492 & 0.7364 \\
@@ -85,7 +85,7 @@ Regarding the audio, doing some manual exploration over the videos and its audio
 \begin{center}
 \begin{tabular}{|l|c|c|}
 \hline
-Features used & mAP & Hit@3 \\
+\textbf{Features used} & \textbf{mAP} & \textbf{Hit@3} \\
 \hline\hline
 Only video & \bf0.5938 & \bf0.7576 \\
 Video w/ audio & 0.5755 & 0.7352 \\
@@ -154,16 +154,18 @@ At the time of submission to the ActivityNet Challenge 2016, the basic architect
 
 \begin{table}[H]
 \begin{center}
-\begin{tabular}{|l|c|c|}
+\begin{tabular}{|m{5cm}|c|c|}
 \hline
-Subset & mAP & Hit@3 \\
+\textbf{Subset} & \textbf{mAP} & \textbf{Hit@3} \\
 \hline\hline
-Validation & 0.5938 & 0.7576 \\
-Test & 0.5874 & 0.7554 \\
+Validation (UPC Team) & 0.5938 & 0.7576 \\
+Test (UPC Team) & 0.5874 & 0.7554 \\
 \hline\hline
 Baseline~\cite{caba2015activitynet} & 0.4220 & - \\
-Challenge Winer~\cite{WangQT15action,2015arXiv150702159W} & 0.9323 & 0.9642 \\
+\hline
 Mean Performance from Challenge Participants & 0.6626 & 0.7706 \\
+\hline
+Challenge Winner~\cite{WangQT15action,2015arXiv150702159W} & 0.9323 & 0.9642 \\
 \hline
 \end{tabular}
 \end{center}
@@ -184,7 +186,7 @@ The basic architecture obtains a slightly better results.
 \begin{center}
 \begin{tabular}{|l|c|}
 \hline
-Architecture & mAP \\
+\textbf{Architecture} & \textbf{mAP} \\
 \hline\hline
 Basic Architecture & \bf0.22513 \\
 Feedback Architecture & 0.20676 \\
@@ -203,11 +205,11 @@ These were $\gamma$ as the activity probability threshold, and $k$ as the window
 \begin{center}
 \begin{tabular}{|l|c|c|c|}
 \hline
-$\gamma$ & $k=0$ & $k=5$ & $k=10$ \\
+\textbf{$\gamma$} & \textbf{$k=0$} & \textbf{$k=5$} & \textbf{$k=10$} \\
 \hline
-0.2 & 0.20732 & \bf0.22513 & 0.22136 \\
-0.3 & 0.19854 & 0.22077 & 0.22100 \\
-0.5 & 0.19035 & 0.21937 & 0.21302 \\
+\textbf{0.2} & 0.20732 & \bf0.22513 & 0.22136 \\
+\textbf{0.3} & 0.19854 & 0.22077 & 0.22100 \\
+\textbf{0.5} & 0.19035 & 0.21937 & 0.21302 \\
 \hline
 \end{tabular}
 \end{center}
@@ -308,16 +310,18 @@ Finally, at the time of submission to the ActivityNet Challenge 2016, the same a
 
 \begin{table}[H]
 \begin{center}
-\begin{tabular}{|l|c|c|}
+\begin{tabular}{|m{5cm}|c|}
 \hline
-Subset & mAP \\
+\textbf{Subset} & \textbf{mAP} \\
 \hline\hline
-Validation & 0.2251 \\
-Test & 0.2236 \\
+Validation (UPC Team) & 0.2251 \\
+Test (UPC Team) & 0.2236 \\
 \hline\hline
 Baseline~\cite{caba2015activitynet} & 0.0970 \\
-Challenge Winer & 0.4247 \\
+\hline
 Mean Performance from Challenge Participants & 0.2994 \\
+\hline
+Challenge Winner & 0.4247 \\
 \hline
 \end{tabular}
 \end{center}
