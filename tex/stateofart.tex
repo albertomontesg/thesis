@@ -1,14 +1,5 @@
 \chapter{State of the Art}
 
-% AMAIA: For the state of the art, I think that you should re-organize it to cover the main different challenges of video analysis, and explain what people do to tackle each (even though you end up citing the same paper more than once in the process). You should also explain what you do in your project, and how it resembles or differs from what others did.
-
-% 1. How do people use information in different frames? Some use 2D convolutions and merge them somehow, others use 3D conv. Here you can talk about pretrained networks (some people use VGG imagenet, there's people who have trained other models for Sports1M, right?)
-% 2. How is motion encoded ? Some works directly use optical flow, while others directly input the visual data.
-% 3. How do people ensure temporal consistency? LSTMs or GRUs
-% 4. Particularly for activity detection, how do people do this? I remember the paper from columbia, where there are several stages. Maybe a strength of your work is that you train a single network that does it all (you just postprocess the output).
-% ...
-
-
 Many works in the literature have explored activity and action recognition problems using deep learning strategies. Most of them used an approach of two stages (encoder and decoder) trained on a dataset of videos. The first stage, the one being consider a decoder, is the stage that tries to encode the visual and temporal information from the input videos into some features vectors or information. The second stage, also known as decoder, casts a prediction of the output, which can be a classification of the video or a temporal localization of an activity.
 
 \section{Convolutional Neural Networks applied to Videos}
@@ -58,10 +49,6 @@ The next step is to decide what new information is going to be stored in the cel
 Finally, the output will be computed based on the cell state, but will be a filtered version. First a sigmoid layer decides what parts of the cell state are going to the output and multiply it by the cell state after a $\tanh$ layer.
 This cells also presents propagation of information along temporal sequences and can be represented forming chain as can also seen on Figure~\ref{fig:lstm_chain}, where each element represents a single time step.
 
-%It also has a memory state which is propagated at every temporal step after performed first some operation. The first step is to compute the forget gate which decides if the information of the memory
-
-%This cells present internal gates that control the propagation of information along the network and also along the temporal sequence forming a chain as is shown in Figure~\ref{fig:lstm_chain}.
-
 \begin{figure}[ht]
 \begin{center}
 \includegraphics[width=0.8\linewidth]{img/stateofart/lstm_chain}
@@ -75,5 +62,3 @@ Most of the literature that uses RNN on video, make their implementation using L
 Another approach found in the literature is using LSTMs and reinforcement learning to temporally localize activities on videos~\cite{yeung2015end} achieving state of the art performance. This achieves very good results without the requirement to have a prediction after seeing all the video frames because with little iterations, the network predicts where the activity is temporally located.
 
 In addition to previous exposed LSTMs, there is a little variation of it which is a cell called Gated Recurrent Unit (GRU)~\cite{cho2014learning}. This is a slightly variation of the LSTM which combines the forget and input gate into an update gate and has been applied in the task of video classification~\cite{ballas2015delving} in conjunction with CNNs.
-
-% AMAIA: Yes, definitely ! I think that what you will explain in later sections is primarily focused on detection, so it is relevant that you explain what people have done in the past, and how your approach differs from them. I think what is interesting in your work is that you don't train in several stages using segment candidates. You train a single network. Ok, it does not improve the results, but the approach is much nicer ideally.

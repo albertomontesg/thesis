@@ -26,8 +26,6 @@ At the same time, the Average Precision for each class is computed based on a ra
 
 As an alterative metric, the $Hit@3$ was also considered. In this case the top 3 ranked classes are considered for each video, considering a good prediction if the correct class is among them. The $Hit@3$ metric simply measures the proportion of videos in the dataset that are correctly predicted under this assumption. This metric has become popular as adopted in the ImageNet ILSRVC image classification challenge.
 
-%\textcolor{red}{XAVI: You should review this definition of AP. I have updated the text but your formula still do not match your text. PLease double check and make sure you understand. ALBERTO: Done}
-
 \subsection{Detection Metric}
 
 For the other task of the ActivityNet Challenge, the temporal localization or detection, the metric used to verify the results given is the Mean Average Prediction score over all activity classes. To do this, a detection is determined to be a true positive according to the following procedure:
@@ -46,8 +44,6 @@ The optimizer function used was the RMSprop~\cite{dauphin2015rmsprop} which is k
 At the weighted loss computation, for the background class was found that its frequency of appearance was 0.4. Different values of $\rho$ were finally tested trying to obtain the best results and finally the $\rho$ was set to $0.3$.
 
 Finally the dropout was set to have a probability of $0.5$ as it is the most frequent value used at the literature~\cite{srivastava2014dropout}.
-
-%\textcolor{red}{XAVI: This section is so small that you may merge it with its counterpart in the Methodology section. It will be much easier to understand if you explain everything in the same section. ALBERTO: I think that on this section I should only give the values set for training as is done in all the publications}
 
 \section{Classification Task}
 
@@ -137,9 +133,6 @@ Personal Care & 0.59931 \\
 
 In addition to the previous figure, and expanding the Average Precision computation to all the activities categories of the Dataset, Figure~\ref{fig:ap_by_activity_classification} plots the sorted APs of all the activities. This plots shows that there is lot of variability in the precision depending on the activity. Taking a closer look, the activities related to sports and require a lot of movement present higher performance in classification. On the other hand, activities more relaxed, which no action happens, tend to have lowest performance.
 
-%\textcolor{red}{XAVI: You did not comment on Figure \ref{fig:map_by_activity_classification}. Add a paragraph about it.}
-
- %%% Better giving this figure or the one with all the activities and see that mAP varies a lot from one activity to another?
 \begin{figure}[H]
 \begin{center}
 \includegraphics[width=1\linewidth]{img/results/ap_by_activity_classification}
@@ -222,9 +215,6 @@ As it can be seen, the best performance was achieved with an activity threshold 
 
 \begin{figure}[ht]
 \begin{center}
-%\includegraphics[width=1\linewidth]{img/results/smoothing_effect_1}
-%\includegraphics[width=1\linewidth]{img/results/smoothing_effect_2}
-%\includegraphics[width=1\linewidth]{img/results/smoothing_effect_3}
 \includegraphics[width=1\linewidth]{img/results/smoothing_effect_4}
 \includegraphics[width=1\linewidth]{img/results/smoothing_effect_5}
 \includegraphics[width=1\linewidth]{img/results/smoothing_effect_6}
@@ -296,7 +286,6 @@ It is very common on tasks where the precision is attached to the Intersection o
 Another application that this work's proposed Neural Network can do is propose temporal regions where activities might be happening. This application is called temporal proposals. Giving only the region where an activity might be happening on the video can be further combined with other Neural Networks in parallel to improve the results. It has been set very clear that the aim of this project is to achieve the classification and temporally localization of activities in a very simple and flexible approach using one single network.
 
 This regions proposals can be computed after the the post-processing where the activity probability is computed and setting the activity threshold at the same value where detection show the best performance. The performance at this application is plot on Figure~\ref{fig:recall_vs_iou} where the Recall is plot against the IoU threshold.
-%On the other hand, the performance at this application, computing the regions after the post-processing, where the activity probabilitu used only as a region proposal is plot on Figure~\ref{fig:recall_vs_iou} where the Recall is plot against the IoU threshold.
 
 \begin{figure}[H]
 \begin{center}
@@ -402,7 +391,6 @@ Notice that this multiclass scenario was not considered for the ActivityNet chal
 \end{figure}
 
 
-%%% I'll put two more examples to fill the page on all this 3 figures.
 \begin{figure}[H]
 \begin{center}
 \includegraphics[width=1\linewidth]{img/results/activity_detection/activity_temporal_localization_0}

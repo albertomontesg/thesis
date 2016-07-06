@@ -1,17 +1,11 @@
 \chapter{Methodology}
 
-This chapter describes the required steps to achieve a functional deep neural network capable of detecting and classifying human activities in untrimmed videos. %For this challenge there was no baseline because video tasks have not been faced on the group I did this project, so was required to face the challenge from scratch.
-
-% AMAIA: Again I think that it is assumed that you did all the work explained in this project.
+This chapter describes the required steps to achieve a functional deep neural network capable of detecting and classifying human activities in untrimmed videos.
 
 \section{Objective}
 
 The aim of this project is to design and train a deep neural network to classify and temporally localize activities in videos. The network is designed to exploit temporal information by combining Convolutional Neural Networks (CNNs) and Recurrent Neural Networks (RNNs). Short-term temporal information is captured by the 3D convolutional features computed over short video clips of 16 frames.
 These features are later fed into a RNN that aims at recognizing longer-term temporal patterns. The RNN is expected to output a label for each clip of 16 video frames, preserving temporal consistency between close predictions in the output sequence. The design of the network enables both activity classification and detection capabilities using simple post-processing techniques on its output.
-
-% AMAIA: I have changed this a bit. I think that all claims & comparison with other works should be done in the state of the art, results and conclusion sections. Here you should just explain your work.
-
-%In order to get that, the proposal is, once the features have been extracted with the C3D, predict with a RNN a sequence of activities that might be happening for every 16-frame clip. So as the output of the Neural Network, is expected to have a sequence each item giving the activity happening at each video clip as input. This approach offers more advantages that others being able to classify the whole video and even localize along the video sequence them multiple activities happening and their temporal localization.
 
 \section{ActivityNet Dataset}
 
@@ -29,7 +23,6 @@ Our model was trained and tested with the ActivityNet Dataset~\cite{caba2015acti
 \caption{Sample of videos from the ActivityNet Dataset}
 \label{fig:dataset_example}
 \end{figure}
-% AMAIA: I think this section is asking for a figure with some examples of the dataset :). Maybe they have a figure like this in the website or their paper already? ALBERTO: DONE
 
 ActivityNet 1.3 contains 660 hours of video, which are split in the following way: 50\% training set, 25\% validation set and 25\% testing set. Each video of the dataset is annotated with a single activity, along with all temporal locations in which the activity occurs. Figure~\ref{fig:dataset_example} presents examples of videos of different activities and its temporal annotations.
 
@@ -37,14 +30,8 @@ The dataset is provided as a description text file, with the URL of the video an
 
 Because all the videos from this dataset are hosted on \textit{YouTube}, only their links are provided to avoid copyright issues. For this reason, the first and costly task was downloading all the videos from their URLs. This was done using a library called \textit{youtube-dl}\footnote{\url{https://rg3.github.io/youtube-dl/}}, which allows downloading YouTube videos with Python calls. Some issues arose during the acquisition of the dataset, such as videos being removed by their owners, or being blocked due to localization restrictions. In those cases, videos could not be downloaded and therefore were not used in the experiments. The total size of the used dataset was of 19,811 videos.
 
-% AMAIA: I changed some of the text above to be less informal in general... but you should try to do it from this point on.
-
 Once the videos from the dataset were downloaded, the number of frames of each video was also computed to be able to convert from seconds to frames in the temporal domain.
-% AMAIA: I don't understand what you mean in the above text. I guess you want to say that all frames from all videos are used ( no subsampling)? The resolution part I don't get. In any case, this does not belong in this section. You should explain this when you talk about feature extraction.
-% ALBERTO: ok done
-In addition, other stats were computed, such as the whole number of frames from all the videos in the dataset, which is 65.6 million frames. Also, the length in minutes of each activity at the dataset was plot on Figure~\ref{fig:dataset_stats}, to have an estimation about the activities duration. As it can be observed, not all the activities have the same duration along the dataset, varying from 40 minutes as the total activity duration
-%\textcolor{red}{XAVI: what do you mean by the total activity appearance ? Is it the average length ? ALBERTO: No. Is the total length of the annotations of each activity}
-to 3.5 hours for the longest activity. In total, over all the dataset there are 313 hours of activities which needed to be detected and classified in the 660 hours of video.
+In addition, other stats were computed, such as the whole number of frames from all the videos in the dataset, which is 65.6 million frames. Also, the length in minutes of each activity at the dataset was plot on Figure~\ref{fig:dataset_stats}, to have an estimation about the activities duration. As it can be observed, not all the activities have the same duration along the dataset, varying from 40 minutes as the total activity duration to 3.5 hours for the longest activity. In total, over all the dataset there are 313 hours of activities which needed to be detected and classified in the 660 hours of video.
 
 \begin{figure}[ht]
 \begin{center}
@@ -73,16 +60,10 @@ The input of the network are clips of videos of 112x112 frames width and height 
 The C3D model~\cite{tran2014learning} was developed over a version of \textit{Caffe}~\cite{jia2014caffe} dated in 2014. This version did not support the \textit{Python} environment used for this project, nor provides tools for implementing RNNs. Given the relevance of RNNs in this work, it was decided to move to the \textit{Keras} framework, which provided the required tools. As a consequence, the C3D model in Caffe trained with the Sports1M~\cite{KarpathyCVPR14} dataset, was ported to \textit{Keras}.
 This was an unexpected contribution of this thesis, which was warmly received by the community of Keras developers. Its main contributor, François Chollet, tweeted about our ported model. All the process has been open sourced and is available online\footnote{ \url{https://gist.github.com/albertomontesg/d8b21a179c1e6cca0480ebdf292c34d2}}.
 
-% AMAIA. Comments for the above text:
-% 1. The sentence explaining what keras is should go someplace else (maybe in the requirements section ?) ALBERTO: Put on requirements.
-% 2. I thought we did not use caffe because it does not support RNNs (at least not the 'vanilla' version right?) RIGHT
-
 At the time to run the C3D model on the model ported to \textit{Keras}, some small changes were applied Keras' source code\footnote{The fork of \textit{Keras} used can be found in: \url{https://github.com/albertomontesg/keras/tree/improved-3d-ops}}, involving the implementation of the 3D convolution and 3D pooling operations. Once this was fixed, all the videos were forwarded through the C3D model, and the features from the first fully connected layer \textit{fc6} were extracted.
 This process used 2 GPUs in parallel for feature extraction, and multiple CPU cores fetching all the videos from disk. The usage of 2 GPUs in parallel reduced the computational time expected for this task from 1 week to 2 days.
 
-% AMAIA: I think that before the above paragraph you should say that you use 16-frame clips, and that you extract a fc6 for each of them. ALBERTO: I think that now done.
-
-In the process of fetching the videos from disk, the \textit{OpenCV}~\cite{opencv_library} library was used. With this software, the videos were read in chunks of 16 frames, resized to 112x112 as input frame size, remove the mean for each color channel which the original model was trained with and then forwarded through the C3D network. The values of the model at the full-connected layer fc6, a sequence of 4096-sized vectors was stored in disk for preparing it to train the Recurrent Neural Network. % AMAIA: fc6 is not the output of the model, but the features that you chose to extract. ALBERTO: Change
+In the process of fetching the videos from disk, the \textit{OpenCV}~\cite{opencv_library} library was used. With this software, the videos were read in chunks of 16 frames, resized to 112x112 as input frame size, remove the mean for each color channel which the original model was trained with and then forwarded through the C3D network. The values of the model at the full-connected layer fc6, a sequence of 4096-sized vectors was stored in disk for preparing it to train the Recurrent Neural Network.
 
 \section{Extraction of Audio Features}
 
@@ -96,9 +77,9 @@ On the other hand, the Spectral features were extracted to have information abou
 
 \section{Recurrent Neural Networks}
 
-Recurrent Neural Networks (RNNs) were adopted as the basic module to solve the main task of this project. Among these family of deep learning architectures, the Long-Term Short Memory networks (LSTMs) were adopted thanks to their ability to learn long term correlations. %Different architectures were built and tested around these modules. %The RNN had the inputs and output previously explained, and so an experimentation of the architecture was done.
+Recurrent Neural Networks (RNNs) were adopted as the basic module to solve the main task of this project. Among these family of deep learning architectures, the Long-Term Short Memory networks (LSTMs) were adopted thanks to their ability to learn long term correlations.
 
-The basic architecture consist in a single layer of LSTM with 512 cells, which is defined with a total of 9.5 millions parameters. A more advanced architecture would consider two layers of LSTMs, as shown in  Figure~\ref{fig:lstm_architecture}.% there is represented the network architecture.
+The basic architecture consist in a single layer of LSTM with 512 cells, which is defined with a total of 9.5 millions parameters. A more advanced architecture would consider two layers of LSTMs, as shown in  Figure~\ref{fig:lstm_architecture}.
 
 \begin{figure}[H]
 \centering
@@ -114,18 +95,9 @@ The basic architecture consist in a single layer of LSTM with 512 cells, which i
 \label{fig:lstm_architecture}
 \end{figure}
 
-During the development of this work, it was observed that the single layer architecture provided very different classes in short periods of time, providing this way very inconsistent results. For this reason, a more sophisticated architecture was introduced, which inserted as
-%With the basic architecture was observed that the activity prediction, in some cases was very different in short periods of time, predicting between two activities or one activity and the background class. To solve this problem, another architecture proposed consist in the previous basic one, but with
-an additional input the activity predicted for the previous clip.
-%at the bottom which consist the previous output of the sequence.
+During the development of this work, it was observed that the single layer architecture provided very different classes in short periods of time, providing this way very inconsistent results. For this reason, a more sophisticated architecture was introduced, which inserted as an additional input the activity predicted for the previous clip.
 Figure~\ref{fig:lstm_architecture_feedback} presents this advanced architecture.
-This new input with the information about the previous activity was
-%codified in a one-hot encoding\footnote{One-hot encoding means to encode integer values into a vector of zeros and a single 1 on the position specified by the given value} and was expanded to have an extra class which will be given at the beginning of each video as it does not have previous output. This input was
-fuse in a concatenation operation with the already extracted features vector and then used to train the Recurrent Neural Network. This kind of feedback on the Network was expected to give smoother predictions, as the network is aware about the previous activity.
-
-%The previous activity encoded in a one-hot encoding\footnote{One-hot encoding means to encode integer values into a vector of zeros and a single 1 on the position specified by the given value} was concatenated to the current video features.  \textcolor{red}{XAVI: It is not clear to me how you combine the video features and this one-hot vector. Are they concatenated ? You seem to state that they are summed.
-%Is this correct ? Please clarify}. which will be always zero except to the first video feature, which do not have previous output, and will be marked with a one. With this extra value, it is expected that the network learn to forget its memory state because the begging of a video sequence.  \textcolor{red}{XAVI: This is also confusing. First, you should explain what a one-hot encoding means. Later, I do not see the relationship between the feedback and making the network to forget. Please rephrase and explain better}. This kind of feedback, was expected to give smoother predictions, as the network is aware about the previous activity.
-%can be found the architecture previously explained with feedback.
+This new input with the information about the previous activity was fuse in a concatenation operation with the already extracted features vector and then used to train the Recurrent Neural Network. This kind of feedback on the Network was expected to give smoother predictions, as the network is aware about the previous activity.
 
 \begin{figure}[H]
 \begin{center}
@@ -135,27 +107,13 @@ fuse in a concatenation operation with the already extracted features vector and
 \label{fig:lstm_architecture_feedback}
 \end{figure}
 
-
-
-%%%%% Talk about semisupervised training???????
-
-
 \section{Data Preparation}
 
 While training of neural networks, both the input and output data are grouped in batches to perform parallel and faster computations of the learning algorithm. This batches have all the same number of fixed length sequences of both inputs and outputs vectors of the dataset.
-%and contains a multiple fixed \textcolor{red}{XAVI: multiple and fixed seem a bit contradictory... is this the right terminology ? Maybe you can rephrase this ?} length sequence of both inputs and outputs of the dataset.
 The length of all the sequences given at each batch is called \textit{timestep} and must be a low value so that the gradient propagates along all the sequence. Otherwise the gradient might achieve very high values, a problem known as \textit{exploiting gradient}.
 
 Most video datasets include content of different lengths, which forces a pre-processing to build training batches of a fixed length.
-%Since in all major video datasets, videos are not from the same length, the videos data must be carefully prepared.
 When training Recurrent Neural Networks, the internal state (which represent the memory stored) of the LSTMs is preserved for every batch computation but then reset between batches. As the sequences of features vectors extracted from videos in the dataset are longer the than the \textit{timestep} used, during training the memory state of the LSTMs will be reset multiple times (depends on the video length).
-
-%It is required, if the goal is learn from long sequence data, as it is the videos of the dataset, to keep the memory of the LSTM alive for long sequences. \textcolor{red}{XAVI: You need to explain better this "LSTM alive" concept that you state. Be more rigurous and help the reader in understanding your text. Do not assume the reader is an expert on this topic. This will probably be the first time s/he reads about LSTMs and training DNN.}
-% AMAIA: You should add a section explaining your architecture before you start talking about how to train it ! So basically section 3.6 should come before this one. ALBERTO:DONE
-
-% AMAIA: A friendly intro explaining that  deep nets are usually trained on batches, which contain many samples of the dataset (of the same size)and are processed in parallel. The problem you have is that videos are too long and therefore do not fit in a single batch (risk of exploding gradients as well), so you need to cut them in pieces to separate them in different batches, and also make sure that LSTM memory is preserved from batch to batch.
-
-% REMOVED: Since all the videos on the ActivityNet Dataset are not from the same length, to train a recurrent neural network, it requires to give it a fixed length sequence. This length is called \textit{timestep} and must be a value not very high because as the gradient propagates along all the sequence, if the timestep is very high, the gradient might achieve very high values known as \textit{exploiting gradient}.
 
 There exist two solutions to this problem. The first solution is organizing data in batches of a large \textit{timestep}, but this would require to clip the gradients, as explained in~\cite{pascanu2012difficulty}. The second solution is to train the RNN without resetting the memory from batch to batch. With this approach, if a video sequence (Equations~\ref{eq:video_seq_1} and~\ref{eq:video_seq_2}) is longer than the \textit{timestep}, the RNN can be trained by passing fragments of the videos as clips, one after the other in different batches, but at the same batch position. Since the memory is not reset after each batch, the video sequence is processed smoothly.
 
@@ -178,21 +136,12 @@ For this configuration, the different videos must be carefully set on the same b
 \label{fig:stateful_dataset}
 \end{figure}
 
-
-%In order to try to fit the most possible data into the GPUs when training each batch and to get a good gradient propagation along the batch's sequence length, for all the experiments done on this project, the batch size was 256 and the timesteps 20. % AMAIA: The values of this parameters should be given in the experiments section- % ALBERTO: Completely agree
-
-As the last step to prepare the data, the misalignment between the blocks of 16 frames and the detailed annotation provided by the ground truth had to be considered. During our training, if the Intersection Over Union (IOU) between the 16-frame clips and the ground truth annotations was higher than $0.5$, the clip was considered as \textit{activity}. On the other hand, if the IOU was below $0.5$, the clip was considered as \textit{background (no activity)}. %\textcolor{red}{XAVI: The next sentences seem to express a completely different idea, right ? Should it be a different paragrpah ? I also wonder if this is something you alerady explained previously, a few paragrpahs earlier...}.
+As the last step to prepare the data, the misalignment between the blocks of 16 frames and the detailed annotation provided by the ground truth had to be considered. During our training, if the Intersection Over Union (IOU) between the 16-frame clips and the ground truth annotations was higher than $0.5$, the clip was considered as \textit{activity}. On the other hand, if the IOU was below $0.5$, the clip was considered as \textit{background (no activity)}.
 
 So at the training and validation subsets, the output was encoded with the one-hot encoding, which puts a 1 at the position of the class given and 0s on the rest.  This way to encode the output is the used for Softmax output layers which represent the probability of each class to be predicted as the output is between 0 and 1. The same codification was used on the network which feedback the previous output, but an additional class was added. For the first element of each video, as they do not have a previous output, a \textit{\textless START\textgreater} class flag was given.
 
-% AMAIA: The above paragraph is explaining the evaluation of the output. This does not go here, but later in the experiments section. ALBERTO: NO, this is trying to explain how is set the output for training for each of the 16-frames clips. This is the step of how I pass from a list of temporal annotations to have some 16-frame clips with a class on each.
-% AMAIA: Again, the explanation of how to encode class labels as one-hot vectors should come later. ALBERTO: This is how the output data is prepared. I think that may fit better on the methodology chapter.
-
-
 \section{Training Methodology}
 \label{section:training}
-% ALBERTO: I'm aware that there are two sections call training both in methodology and results. May I change the name of this one??
-% XAVI: Maybe you can call teh
 
 During training, each batch is forwarded to the Neural Net and with the output predicted and the ground truth given, the loss is computed. The objective of every learning step is to reduce the loss, so using a specific gradient computation, the parameters of the network are updated in proportion of the computed gradient and a value previously set called the learning rate. As the training goes on, it is expected and required that the loss value after every batch decreases for both training and validation subsets. The first subset is the one used to update the model's parameters while the second one is used to test the behavior of the network while training.
 
@@ -201,7 +150,7 @@ It is very common that if the learning rate is not correctly set, the loss for t
 The training of RNNs allows learning the parameters that govern their behavior. The training process itself is also determined by certain design decisions.
 Firstly, the loss function, also known as objective function, allows assessing the performance of the trained network by comparing its prediction over the training set. As the last layer used was a Softmax which is non-linear function that gives values between 0 and 1, the output can be understand as the probability of predicting each of the classes at the output. Having at the output a distribution of probability, the common computation of the loss is using the \textit{categorical cross entropy}.
 
-The \textit{categorical cross entropy} function is described in Equation~\ref{eq:crossentropy} and represents the average number of bits needed to identify an event drawn from the set, if a coding scheme is used that is optimized for the predicted probability distribution $q$, rather than the ground truth probability distribution $p$. This function is higher as more different the predicted distribution and the ground truth are.%    We adopted the \textit{categorical cross entropy}, because the output of the softmax can be considered as a probability distribution. \textcolor{red}{XAVI: Could you develop a bit more ?}
+The \textit{categorical cross entropy} function is described in Equation~\ref{eq:crossentropy} and represents the average number of bits needed to identify an event drawn from the set, if a coding scheme is used that is optimized for the predicted probability distribution $q$, rather than the ground truth probability distribution $p$. This function is higher as more different the predicted distribution and the ground truth are.
 
 \begin{equation}
 \label{eq:crossentropy}
@@ -209,11 +158,7 @@ The \textit{categorical cross entropy} function is described in Equation~\ref{eq
 \end{equation}
 
 Secondly, the learning rate controls how quickly the parameters of the model are updated.
-Figure~\ref{fig:training_curves_comparison} shows the learning curves of the same network with a different values of learning rate. On this curves the loss (blue) and the accuracy (red) are plot over the epochs, and also separated by subset: training (thin line) and validation (striped line). Note that an epoch is the number of iterations required to have forwarded all the batches of the dataset once. In our case, the best learning rate was $10^{-5}$. %\textcolor{red}{XAVI: I think this is the first time you present these learning curves. You should describe them more to help the reader understaands the message. Again, please do not suppose your reader is an expert of deep learning, but somebody who is having his first contact with it.}
-
-%paraotherwise, have been the value that has need to be tuned. At the training, starting with high values for the learning rate, it was observed that the network did not learned and the validation loss increased instead of decreasing.
-
-
+Figure~\ref{fig:training_curves_comparison} shows the learning curves of the same network with a different values of learning rate. On this curves the loss (blue) and the accuracy (red) are plot over the epochs, and also separated by subset: training (thin line) and validation (striped line). Note that an epoch is the number of iterations required to have forwarded all the batches of the dataset once. In our case, the best learning rate was $10^{-5}$.
 
 \begin{figure}[H]
 \centering
@@ -229,16 +174,14 @@ Figure~\ref{fig:training_curves_comparison} shows the learning curves of the sam
 \label{fig:training_curves_comparison}
 \end{figure}
 
-It was observed that the network presented some over-fitting due mostly to the high learning capacity the network has over the data. %\textcolor{red}{XAVI: You should describe what is over-fitting and high learning capacity.}
-This over-fitting problem can be addressed by adding dropout~\cite{srivastava2014dropout} layers before and after the LSTM layers. Dropout consists in randomly setting a fraction $p$ of input units to 0 at each update during training time. %The value of $p$ chosen was 0.5.
+It was observed that the network presented some over-fitting due mostly to the high learning capacity the network has over the data.
+This over-fitting problem can be addressed by adding dropout~\cite{srivastava2014dropout} layers before and after the LSTM layers. Dropout consists in randomly setting a fraction $p$ of input units to 0 at each update during training time.
 
 The combination of visual and audio features required a normalization step, as they presented different statistics and range of values.
-%Another inconvenience found during training, was related to the fact of having as an input multiple vectors from multiple sources.
-%When training with the visual features extracted from the C3D network, with the audio features or/and the previous output, as all of them presented a different statistics, a normalization was required.
 So for all the experiments, a batch normalization~\cite{ioffe2015batch} was included after the input data in order to have all the inputs with the same statistics, mean 0 and standard deviation equal to 1.
 
 The last problem that was necessary to face, was related to an unbalanced distribution of classes in the dataset. All the activities had approximately the same frequency of appearance, but nearly half of the video clips correspond to a non-activity, or as previously defined, background class.
-Given the used categorical cross entropy as loss function, the network tended to predict the background class. For this reason, it was decided to weight the loss function in order to slow down the learning of weights when the background class was predicted. %With this method the predicted output will not be so bias towards the background class.
+Given the used categorical cross entropy as loss function, the network tended to predict the background class. For this reason, it was decided to weight the loss function in order to slow down the learning of weights when the background class was predicted.
 
 The weighted loss function taking into account the unbalanced classes is defined as
 
@@ -250,15 +193,13 @@ The weighted loss function taking into account the unbalanced classes is defined
     \end{cases}
 \end{equation}
 
-where $\rho$ is the factor used to weight the loss for background instances at training. This value $\rho$ is usually computed as 1 minus the frequency of appearance of the class (for all the activities class can be simplified to 1). %For the background class was found the its frequency of appearance was 0.4 so it was tested to setup $\rho = 0.6$. The results did present a little improvement so it was decided to even do smaller this value, setting it finally $\rho = 0.3$.
+where $\rho$ is the factor used to weight the loss for background instances at training. This value $\rho$ is usually computed as 1 minus the frequency of appearance of the class (for all the activities class can be simplified to 1).
 
 \section{Post-Processing}
 \label{section:post_processing}
 
 The proposed network generates as an output the predicted activity probability for each 16-frames clip.
 These clip-wise predictions were post-processed to solve the project goals of activity classification and detection.
-
-%For the challenge to face during this project, and for the aim of this project is required to compute from the output obtained the activity classification for the whole video and the temporal localization of this activity. To obtain this information, some post-processing was required as it is not directly predicted from the network.
 
 \subsection{Classification Task}
 
@@ -272,7 +213,7 @@ With this operation, each video in the dataset is associated to a vector of prob
 
 \subsection{Detection Task}
 
-For the detection task of the ActivityNet Challenge, also referred as temporal activity localization, more operations were required. We exploited the fact that each video in ActivityNet dataset is annotated with a single activity class, which may occur at multiple temporal segments. % is known that at every video of the ActivityNet Dataset all the annotation are of the same activity, the classification activity was first computed and give it as solution for all the temporal localization.
+For the detection task of the ActivityNet Challenge, also referred as temporal activity localization, more operations were required. We exploited the fact that each video in ActivityNet dataset is annotated with a single activity class, which may occur at multiple temporal segments.
 
 The sequence probabilities predicted by the RNN were filtered with the \textit{mean} operator of size $k$, being $k$ the size of the window backwards and forward. Equation~\ref{eq:mean_filter} defines this filter. This filtering step generated a smoother output prediction.
 
@@ -289,8 +230,4 @@ The next step was for every step of the output sequence, compute the activity pr
     \end{cases}
 \end{equation}
 
-%\textcolor{red}{XAVI: Should not this Equation 3.7 be the same as 3.5 ? ALBERTO: NO. in 3.5 it is computed the mean along the sequence, and in 3.7 it is sum the probability of having an activity at each step of the sequence.}
-
 Finally, only those activity detection with $\tilde{p}^a_i$ over a certain probability threshold ~$\gamma$ were considered. The rest were discarded as they did not meet a minimum of confidence. Both parameters $k$ and $\gamma$ were learned also during the training process described in Section~\ref{section:results}
-
-%In particular, those detections with an activity probability $\tilde{p}^a_i$ higher than the threshold $\gamma$. Playing with the values of $k$ of the mean filter and the threshold $\gamma$ it has been possible to find the best values to get the best performance. The results of all the experimentation described on this section is detailed on Section~\ref{section:results}

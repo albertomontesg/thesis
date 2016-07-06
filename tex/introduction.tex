@@ -8,30 +8,14 @@ Deep learning techniques have recently become the new state of the art in many c
 
 The purpose of this work is to address the challenges of video content analysis taking advantage of state-of-the-art deep learning techniques. The aim of this project is to develop a competitive framework to both classify and temporally localize activities on videos. To achieve this goal, the dataset used to fulfill this task is be the ActivityNet dataset~\cite{caba2015activitynet}, which offers untrimmed videos depicting a diversity of human activities.
 
-%Rather than focusing on activity classification on videos, the aim of this project is to offer a good framework to detect and localize activities on videos. To achieve this goal, the dataset used to fulfill this task will be the ActivityNet dataset~\cite{caba2015activitynet}, which offers untrimmed videos which a huge variety of activities on it.
-
-% AMAIA: I think that it is fine to say that you will both address activity classification and detection in your thesis, not just detection... DONE
-
 In particular, this project's main contributions are:
 \begin{itemize}
 	\item The design and training of a deep learning model architecture, which is based on 3D Convolutional features and Recurrent Neural Networks.
     \item The development and analysis of post processing techniques for classification and temporal localization
     \item The release of an open sourced package containing all the tools to reproduce the experiments, as well as the conversion of a state-of-the-art C3D model from Caffe to Keras.
-
-% REMOVED:    \item A framework to classify and localize activities on videos using deep learning techniques, more precisely using recurrent neural networks.
-%    \item Develop techniques to process sequence output from Recurrent Neural Networks, to get the activities' localization on videos.
-%    \item Explore different configurations of Neural Networks to achieve the best results in activity classification and detection.
-%    \item Contribute to the research community porting a model to extract features from video from one deep learning framework to another and open sourcing the code.
 \end{itemize}
 
-% AMAIA: I am not sure whether these are your contributions or a summary list of everything you did in the thesis. For contributions, I would stick to:
-% 1) The design and training of the architecture, which is based on 3D conv features and RNNs
-% 2) The development & analysis of postprocesssing techniques for classification & detection
-% 3) The release of an opensourced package containing all the tools to reproduce the experiments, as well as the conversion of a state-of-the-art 3CD model from Caffe to Keras.
-
-This project has been developed at the \textit{Image Processing Group (GPI) of the Universitat Politècnica de Catalunya (UPC)} during the Spring 2016 semester. This group had already work in deep learning techniques for still images, but never before in video analytic. %In this sense, this is a pioneering work that sets a baseline technique and software for future research within the group.
-%REMOVED: This project has no baseline and all the code and development of deep learning techniques applied to video has been done from scratch.
-% AMAIA: What do you mean with this sentence? I guess this is assumed in all projects unless stated otherwise... ALBERTO: I tried to say that it has all been done from scratch with no previous work on this field on the Image group.
+This project has been developed at the \textit{Image Processing Group (GPI) of the Universitat Politècnica de Catalunya (UPC)} during the Spring 2016 semester. This group had already work in deep learning techniques for still images, but never before in video analytic.
 
 \section{Requirements and Specifications}
 
@@ -40,8 +24,6 @@ This project has been developed with the implicit goal of setting a baseline for
     \item Design and train a deep neural network to classify and temporally localize activities on videos using the ActivityNet Dataset.
     \item Participate in the ActivityNet Challenge 2016, organized as a workshop in the top conference IEEE Conference on Computer Vision and Pattern Recognition (h5-index = 128).
 \end{itemize}
-
-% AMAIA: I guess that by requirements you mean "what you were asked to do/what we agreed to do" at the beginning of the project? I slightly modified it, uut feel free to add more items.
 
 As this project has been developed from scratch, no prior specifications were defined. The specifications were decided taking into account the needs for the project and the available resources. All the development was done on \textit{Python} using a very well-known framework which is \textit{Keras}, also a pioneering use of this library in GPI. This Deep Learning wrapper facilitates the design and training of models over two computational frameworks: \textit{Theano}~\cite{theano2016theano} and \textit{TensorFlow}~\cite{abadi2016tensorflow}. Both  projects support complex and high demanding computations over both CPU and GPU. For this project \textit{Theano} was used as back-end because, at the time of developing this project, it was the only one that had implemented the convolution 3D and max pooling 3D operations required for its development.
 
@@ -95,8 +77,6 @@ The Gantt diagram of this project can be found on the Figure~\ref{fig:gantt_diag
 \caption{Gantt diagram of this thesis.}
 \label{fig:gantt_diagram}
 \end{figure}
-
-%\textcolor{red}{XAVI: Do not forget your Gantt diagram. You can always check the meetings notes I took if you do not remember the exact timing of each task. This document should help you in reviewing everything you have been doing since February.}
 
 
 \section{Work Plan Deviations and Incidents}
